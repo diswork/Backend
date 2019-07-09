@@ -10,6 +10,7 @@ var user_routes = require('./routes/userRoutes');
 var empresa_routes = require('./routes/empresaRoutes');
 var categoria_routes = require('./routes/categoriaRoutes');
 var nivelAcademico_routes = require('./routes/nivelAcademicoRoutes');
+const ofertaRoutes = require('./routes/ofertaRoutes');
 
 //MIDDLEWARES
 app.use(bodyParser.urlencoded({ extended: false}));
@@ -26,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 //RUTAS
-app.use('/api', user_routes, categoria_routes, nivelAcademico_routes, empresa_routes);
+app.use('/api', user_routes, categoria_routes, nivelAcademico_routes, empresa_routes,ofertaRoutes);
 
 
 //EXPORTAR

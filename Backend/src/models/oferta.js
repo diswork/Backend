@@ -11,11 +11,13 @@ const OfertaSchema = Schema({
         ref: "Category"
     },
     nivelAcademico: String,
-    tarjetaCredito: String,
+    tarjeta: String,
     empresa: {
         type: Schema.ObjectId,
         ref: 'Enterprise'
-    }
+    },
+    disponible : Boolean
+
 })
 
 module.exports = mongoose.model('Offer', OfertaSchema);

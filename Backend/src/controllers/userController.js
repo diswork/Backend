@@ -77,7 +77,7 @@ function login(req, res) {
         if (user) {
             bcrypt.compare(password, user.password, (err, check) => {
                 if (check) {
-                    if (params.gettoken && user.rol === 'user') {
+                    if (params.gettoken && user.rol === 'user' || user.rol === 'admin') {
                         return res.status(200).send({
                             token: jwt.createToken(user),user:user
                         })
