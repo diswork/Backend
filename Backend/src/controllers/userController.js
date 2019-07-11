@@ -10,9 +10,10 @@ var fs = require('fs');
 
 function registrar(req, res) {
     var user = new User();
+    var empresa = new Empresa();
     var params = req.body;
 
-    if (params.nickName && params.email && params.password && params.rol && params.telefono) {
+    if (params.nickName && params.email && params.password && params.rol === 'user' && params.telefono) {
         user.nickName = params.nickName;        
         user.email = params.email;
         user.rol = params.rol;
@@ -48,11 +49,48 @@ function registrar(req, res) {
                 });
             }
         });
+    } 
+    else if (params.nombre && params.email && params.password && params.rol === 'empresa' && params.direccion && params.telefono) {
+        empresa.nombre = params.nombre;        
+        empresa.email = params.email;
+        empresa.rol = params.rol;
+        empresa.direccion = params.direccion;
+        empresa.telefono = params.telefono;
+        empresa.image = null;        
+
+
+        Empresa.find({
+            $or: [
+                { nombre: empresa.nombre.toLowerCase() },
+                { email: empresa.email.toLowerCase() },
+            ]
+        }).exec((err, empresas) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
+
+            if (empresas && empresas.length >= 1) {
+                return res.status(500).send({ message: 'El usuario ya existe' });
+            } else {
+                bcrypt.hash(params.password, null, null, (err, hash) => {
+                    empresa.password = hash;
+
+                    empresa.save((err, empresaStored) => {
+                        if (err) return res.status(500).send({ message: 'Error al guardar el usuario' });
+
+                        if (empresaStored) {
+                            res.status(200).send({ empresa: empresaStored })
+                        } else {
+                            res.status(404).send({ message: 'no se ha registrado el usuario' });
+                        }
+                    });
+                });
+            }
+        });
     } else {
         res.status(200).send({
             message: 'Rellene todos los datos necesarios'
         });
     }
+    
 
 }
 
