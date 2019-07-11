@@ -7,53 +7,6 @@ var path = require('path');
 var fs = require('fs');
 
 
-function registrarEmpresa(req, res) {
-    var empresa = new Empresa();
-    var params = req.body;
-
-    if (params.nombre && params.email && params.password && params.rol && params.direccion && params.telefono) {
-        empresa.nombre = params.nombre;        
-        empresa.email = params.email;
-        empresa.rol = params.rol;
-        empresa.direccion = params.direccion;
-        empresa.telefono = params.telefono;
-        empresa.image = null;        
-
-
-        Empresa.find({
-            $or: [
-                { nombre: empresa.nombre.toLowerCase() },
-                { email: empresa.email.toLowerCase() },
-            ]
-        }).exec((err, empresas) => {
-            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
-
-            if (empresas && empresas.length >= 1) {
-                return res.status(500).send({ message: 'El usuario ya existe' });
-            } else {
-                bcrypt.hash(params.password, null, null, (err, hash) => {
-                    empresa.password = hash;
-
-                    empresa.save((err, empresaStored) => {
-                        if (err) return res.status(500).send({ message: 'Error al guardar el usuario' });
-
-                        if (empresaStored) {
-                            res.status(200).send({ emoresa: empresaStored })
-                        } else {
-                            res.status(404).send({ message: 'no se ha registrado el usuario' });
-                        }
-                    });
-                });
-            }
-        });
-    } else {
-        res.status(200).send({
-            message: 'Rellene todos los datos necesarios'
-        });
-    }
-
-}
-
 function getEmpresas(req, res) {
     Empresa.find().exec((err, empresasEncontrados) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' });
