@@ -116,14 +116,19 @@ function login(req, res) {
             bcrypt.compare(password, user.password, (err, check) => {
                 if (check) {
                     if (params.gettoken && user.rol === 'user' || user.rol === 'admin') {
+
                         return res.status(200).send({
                             token: jwt.createToken(user),user:user
+                           
                         })
+                         console.log(req.user.rol)
                     } else {
                         user.password = undefined;
                         return res.status(200).send({ user })
                     }
-                } 
+                } else {
+                    return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
+                }
             });
         } else {
             Empresa.findOne({ email: email2 }, (err, empresa) => {
@@ -139,9 +144,11 @@ function login(req, res) {
                                 return res.status(200).send({ empresa })
                             }
                         } else {
-                            return res.status(404).send({ message: 'la empresa no se a podido identificar' })
+                            return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
                         }
                     });
+                }else{
+                    return res.status(404).send({ message: 'El usuario no existe' })
                 }
             })
         }

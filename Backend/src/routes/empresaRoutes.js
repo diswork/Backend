@@ -11,7 +11,7 @@ var md_subir = multiparty({ uploadDir: './src/uploads/users' })
 
 //Rutas
 var api = express.Router();
-api.post('/registrarEmpresa', EmpresaController.registrarEmpresa);
+//api.post('/registrarEmpresa', EmpresaController.registrarEmpresa);
 //api.post('/subir-imagen-usuario/:id', [md_auth.ensureAuth, md_subir], EmpresaController.subirImagen);
 //api.get('/obtener-imagen-usuario/:nombreImagen', EmpresaController.obtenerImagen)
 //api.put('/editar-usuario/:id', md_auth.ensureAuth, EmpresaController.editarUsuario)

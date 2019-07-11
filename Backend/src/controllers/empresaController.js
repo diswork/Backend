@@ -91,7 +91,6 @@ function editarEmpresa(req, res) {
 
 
 module.exports = {
-    registrarEmpresa,
     subirImagen,
     obtenerImagen,
     editarEmpresa,
