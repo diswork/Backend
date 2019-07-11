@@ -16,7 +16,6 @@ api.post('/login', userController.login);
 api.post('/subir-imagen-usuario/:id', [md_auth.ensureAuth, md_subir], userController.subirImagen);
 api.get('/obtener-imagen-usuario/:nombreImagen', userController.obtenerImagen);
 api.put('/editar-usuario/:id', md_auth.ensureAuth, userController.editarUsuario);
-api.put('/empresas/:id', md_auth.ensureAuth, userController.agregarEmpresas);
 api.get('/usuarios', userController.getUsers);
 api.get('/usuario/:id', md_auth.ensureAuth, userController.getUser);
 api.put('/seguirEmpresa/:id', md_auth.ensureAuth, UserController.seguirEmpresa)
