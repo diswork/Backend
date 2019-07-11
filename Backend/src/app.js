@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 //RUTAS
-app.use('/api', user_routes, categoria_routes, nivelAcademico_routes, empresa_routes,ofertaRoutes);
+app.use('/api', user_routes, categoria_routes, nivelAcademico_routes,empresa_routes,ofertaRoutes);
 
 
 //EXPORTAR

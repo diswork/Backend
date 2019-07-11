@@ -16,6 +16,7 @@ api.post('/login', UserController.login);
 api.post('/subir-imagen-usuario/:id', [md_auth.ensureAuth, md_subir], UserController.subirImagen);
 api.get('/obtener-imagen-usuario/:nombreImagen', UserController.obtenerImagen)
 api.put('/editar-usuario/:id', md_auth.ensureAuth, UserController.editarUsuario)
-api.get('/usuarios', UserController.getUsers)
+api.get('/usuarios', UserController.getUsers),
+api.put('/seguirEmpresa/:id',md_auth.ensureAuth, UserController.seguirEmpresa)
 
 module.exports = api;

@@ -14,7 +14,7 @@ function registrar(req, res) {
     var params = req.body;
 
     if (params.nickName && params.email && params.password && params.rol === 'user' && params.telefono) {
-        user.nickName = params.nickName;        
+        user.nickName = params.nickName;
         user.email = params.email;
         user.rol = params.rol;
         user.image = null;
@@ -49,14 +49,14 @@ function registrar(req, res) {
                 });
             }
         });
-    } 
+    }
     else if (params.nombre && params.email && params.password && params.rol === 'empresa' && params.direccion && params.telefono) {
-        empresa.nombre = params.nombre;        
+        empresa.nombre = params.nombre;
         empresa.email = params.email;
         empresa.rol = params.rol;
         empresa.direccion = params.direccion;
         empresa.telefono = params.telefono;
-        empresa.image = null;        
+        empresa.image = null;
 
 
         Empresa.find({
@@ -90,7 +90,7 @@ function registrar(req, res) {
             message: 'Rellene todos los datos necesarios'
         });
     }
-    
+
 
 }
 
@@ -118,10 +118,10 @@ function login(req, res) {
                     if (params.gettoken && user.rol === 'user' || user.rol === 'admin') {
 
                         return res.status(200).send({
-                            token: jwt.createToken(user),user:user
-                           
+                            token: jwt.createToken(user), user: user
+
                         })
-                         console.log(req.user.rol)
+                        console.log(req.user.rol)
                     } else {
                         user.password = undefined;
                         return res.status(200).send({ user })
@@ -137,7 +137,7 @@ function login(req, res) {
                         if (check) {
                             if (params.gettoken && empresa.rol === 'empresa') {
                                 return res.status(200).send({
-                                    token: jwt.createTokenEmpresa(empresa),empresa:empresa
+                                    token: jwt.createTokenEmpresa(empresa), empresa: empresa
                                 })
                             } else {
                                 empresa.password = undefined;
@@ -147,7 +147,7 @@ function login(req, res) {
                             return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
                         }
                     });
-                }else{
+                } else {
                     return res.status(404).send({ message: 'El usuario no existe' })
                 }
             })
@@ -228,6 +228,50 @@ function editarUsuario(req, res) {
     })
 }
 
+function seguirEmpresa(req, res) {
+    var rol = req.user.rol;
+    var parameters = req.body
+    var idEmpresa = req.params.id
+    var idUsuario = req.user.sub
+    var empresaRepetida = false;
+
+    if (rol == 'user') {
+        Empresa.findById(idEmpresa, (err, empresaEncontrada) => {
+            if (err) return res.status(500).send({ message: 'error en la peticion' });
+
+            if (!empresaEncontrada) return res.status(404).send({ message: 'La empresa no existe' })
+
+            User.findById(idUsuario, (err, usuarioEncontrado) => {
+                if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+                if (!usuarioEncontrado) return res.status(404).send({ message: 'No se ha encontrado el usuario' })
+
+
+                for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+
+                    if (idEmpresa == usuarioEncontrado.empresas[x]) {
+                        empresaRepetida = true;
+
+                    } else {
+                        empresaRepetida = false;
+                    }
+                }
+
+                if (empresaRepetida == true) {
+                    return res.status(200).send({ message: 'El usuario ya sigue a la empresa' });
+
+                } if (empresaRepetida == false) {
+                    usuarioEncontrado.empresas.push(idEmpresa);
+                    usuarioEncontrado.save();
+                    return res.status(200).send({ usuario: usuarioEncontrado })
+                }
+            })
+        })
+    } else {
+        return res.status(403).send({ message: 'No tienes los permisos necesarios' })
+    }
+}
+
 
 module.exports = {
     registrar,
@@ -235,5 +279,6 @@ module.exports = {
     subirImagen,
     obtenerImagen,
     editarUsuario,
-    getUsers
+    getUsers,
+    seguirEmpresa
 }
