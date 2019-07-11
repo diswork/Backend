@@ -14,7 +14,7 @@ function registrar(req, res) {
     var params = req.body;
 
     if (params.nickName && params.email && params.password && params.rol === 'user' && params.telefono) {
-        user.nickName = params.nickName;        
+        user.nickName = params.nickName;
         user.email = params.email;
         user.rol = params.rol;
         user.image = null;
@@ -49,14 +49,13 @@ function registrar(req, res) {
                 });
             }
         });
-    } 
-    else if (params.nombre && params.email && params.password && params.rol === 'empresa' && params.direccion && params.telefono) {
-        empresa.nombre = params.nombre;        
+    } else if (params.nombre && params.email && params.password && params.rol === 'empresa' && params.direccion && params.telefono) {
+        empresa.nombre = params.nombre;
         empresa.email = params.email;
         empresa.rol = params.rol;
         empresa.direccion = params.direccion;
         empresa.telefono = params.telefono;
-        empresa.image = null;        
+        empresa.image = null;
 
 
         Empresa.find({
@@ -90,7 +89,7 @@ function registrar(req, res) {
             message: 'Rellene todos los datos necesarios'
         });
     }
-    
+
 
 }
 
@@ -99,40 +98,40 @@ function agregarEmpresas(req, res) {
     var userId = req.user.sub;
     //var empresaSeguir = params.empresa;  // este campo recibe la empresa que el usuario va a seguir
     var empresaId = req.params.id;
-    var empresaSeguida = false;  // este campo solo verifica si el usuario ya sigue a la empresa
+    var empresaSeguida = false; // este campo solo verifica si el usuario ya sigue a la empresa
 
-    if(req.user.rol === 'user') {
+    if (req.user.rol === 'user') {
         User.findById(userId, (err, usuarioEncontrada) => {
-            if(err) return res.status(404).send({message : 'Error Request'});
-    
-            if(!usuarioEncontrada) return res.status(500).send({message : 'Error al listar el usuario'});
-    
-            for(let x = 0; x < usuarioEncontrada.empresas.length; x++){                
-                if(usuarioEncontrada.empresas[x] == empresaId){
+            if (err) return res.status(404).send({ message: 'Error Request' });
+
+            if (!usuarioEncontrada) return res.status(500).send({ message: 'Error al listar el usuario' });
+
+            for (let x = 0; x < usuarioEncontrada.empresas.length; x++) {
+                if (usuarioEncontrada.empresas[x] == empresaId) {
                     empresaSeguida = true;
-                    return res.status(500).send({message : 'El usuario ya sigue a esta empresa'});
+                    return res.status(500).send({ message: 'El usuario ya sigue a esta empresa' });
                 }
             }
-    
-            if(empresaSeguida === false){
-                User.findByIdAndUpdate(userId, params, {new : true}, (err, nuevo) =>{
-                    if(err) return res.status(500).send({message : 'Request Error!'});
-    
-                    if(!nuevo) return res.status(400).send({message : 'Error al actualizar el usuario'});
-    
+
+            if (empresaSeguida === false) {
+                User.findByIdAndUpdate(userId, params, { new: true }, (err, nuevo) => {
+                    if (err) return res.status(500).send({ message: 'Request Error!' });
+
+                    if (!nuevo) return res.status(400).send({ message: 'Error al actualizar el usuario' });
+
                     nuevo.empresas.push(empresaId);
                     nuevo.save();
-    
-                    return res.status(200).send({empresa : nuevo});
+
+                    return res.status(200).send({ empresa: nuevo });
                 })
             }
-        })        
+        })
     } else {
-        return res.status(400).send({message : 'La empresa no puede realizar esta peticion'});        
+        return res.status(400).send({ message: 'La empresa no puede realizar esta peticion' });
     }
-    
 
-    
+
+
 }
 
 function getUsers(req, res) {
@@ -167,10 +166,11 @@ function login(req, res) {
                     if (params.gettoken && user.rol === 'user' || user.rol === 'admin') {
 
                         return res.status(200).send({
-                            token: jwt.createToken(user),user:user
-                           
+                            token: jwt.createToken(user),
+                            user: user
+
                         })
-                         console.log(req.user.rol)
+                        console.log(req.user.rol)
                     } else {
                         user.password = undefined;
                         return res.status(200).send({ user })
@@ -186,7 +186,8 @@ function login(req, res) {
                         if (check) {
                             if (params.gettoken && empresa.rol === 'empresa') {
                                 return res.status(200).send({
-                                    token: jwt.createTokenEmpresa(empresa),empresa:empresa
+                                    token: jwt.createTokenEmpresa(empresa),
+                                    empresa: empresa
                                 })
                             } else {
                                 empresa.password = undefined;
@@ -196,7 +197,7 @@ function login(req, res) {
                             return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
                         }
                     });
-                }else{
+                } else {
                     return res.status(404).send({ message: 'El usuario no existe' })
                 }
             })
@@ -277,6 +278,51 @@ function editarUsuario(req, res) {
     })
 }
 
+function seguirEmpresa(req, res) {
+    var rol = req.user.rol;
+    var parameters = req.body
+    var idEmpresa = req.params.id
+    var idUsuario = req.user.sub
+    var empresaRepetida = false;
+
+    if (rol == 'user') {
+        Empresa.findById(idEmpresa, (err, empresaEncontrada) => {
+            if (err) return res.status(500).send({ message: 'error en la peticion' });
+
+            if (!empresaEncontrada) return res.status(404).send({ message: 'La empresa no existe' })
+
+            User.findById(idUsuario, (err, usuarioEncontrado) => {
+                if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+                if (!usuarioEncontrado) return res.status(404).send({ message: 'No se ha encontrado el usuario' })
+
+
+                for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+
+                    if (idEmpresa == usuarioEncontrado.empresas[x]) {
+                        empresaRepetida = true;
+
+                    } else {
+                        empresaRepetida = false;
+                    }
+                }
+
+                if (empresaRepetida == true) {
+                    return res.status(200).send({ message: 'El usuario ya sigue a la empresa' });
+
+                }
+                if (empresaRepetida == false) {
+                    usuarioEncontrado.empresas.push(idEmpresa);
+                    usuarioEncontrado.save();
+                    return res.status(200).send({ usuario: usuarioEncontrado })
+                }
+            })
+        })
+    } else {
+        return res.status(403).send({ message: 'No tienes los permisos necesarios' })
+    }
+}
+
 
 module.exports = {
     registrar,
@@ -286,5 +332,6 @@ module.exports = {
     editarUsuario,
     getUsers,
     agregarEmpresas,
-    getUser
+    getUser,
+    seguirEmpresa
 }

@@ -19,5 +19,6 @@ api.put('/editar-usuario/:id', md_auth.ensureAuth, userController.editarUsuario)
 api.put('/empresas/:id', md_auth.ensureAuth, userController.agregarEmpresas);
 api.get('/usuarios', userController.getUsers);
 api.get('/usuario/:id', md_auth.ensureAuth, userController.getUser);
+api.put('/seguirEmpresa/:id', md_auth.ensureAuth, UserController.seguirEmpresa)
 
 module.exports = api;

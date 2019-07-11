@@ -38,33 +38,61 @@ function editarOferta(req, res) {
     var parameters = req.body
 
     if (rol === 'admin' || rol === 'empresa') {
-        Oferta.findById(idOferta,(err, ofertaEncontrada) => {
-            if(err) return res.status(500).send({message: 'Error en la peticion'});
+        Oferta.findById(idOferta, (err, ofertaEncontrada) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion' });
 
-            if(!ofertaEncontrada) return res.status(404).send({message: 'No se ha encontrado la oferta '});
+            if (!ofertaEncontrada) return res.status(404).send({ message: 'No se ha encontrado la oferta ' });
 
             if (ofertaEncontrada.empresa == idEmpresa || rol == 'admin') {
-                Oferta.findByIdAndUpdate(idOferta,parameters,{new:true},(err, ofertaActualizada) => {
-                    if(err) return res.status(500).send({message: 'Error en la peticion'});
+                Oferta.findByIdAndUpdate(idOferta, parameters, { new: true }, (err, ofertaActualizada) => {
+                    if (err) return res.status(500).send({ message: 'Error en la peticion' });
 
-                    if(!ofertaActualizada) return res.status(404).send({message: 'No se ha podido encontrar la oferta a actualizar'});
+                    if (!ofertaActualizada) return res.status(404).send({ message: 'No se ha podido encontrar la oferta a actualizar' });
 
-                    return res.status(200).send({oferta: ofertaActualizada})
+                    return res.status(200).send({ oferta: ofertaActualizada })
                 });
-            }else{
-                return res.status(403).send({message: 'No tienes permisos para actualizar la oferta'})
+            } else {
+                return res.status(403).send({ message: 'No tienes permisos para actualizar la oferta' })
             }
         })
     } else {
         return res.status(403).send({ message: 'Debes tener permisos para actualizar la oferta' })
     }
+}
 
+function getOfertas(req, res) {
+    Oferta.find().exec((err, ofertasEncontradas) => {
+        if (err) return res.status(500).send({ message: 'Error en la peticion' });
+        if (!ofertasEncontradas) return res.status(404).send({ message: 'No se han encotrado ofertas' });
+        return res.status(200).send({ ofertas: ofertasEncontradas })
+    })
+}
 
+function getOfertasPorEmpresa(req,res){
+    var rol= req.user.rol;
+    var ofertaPorEmpresa = req.params.id
+
+    if(rol == 'user'){
+        Oferta.find({empresa: ofertaPorEmpresa},(err, ofertasEncontradas)=> {
+            if(err) return req.status(500).send({message: 'Error en la peticion'});
+            if(!ofertaPorEmpresa) return req.status(404).send({message: 'No se encuentran ofertas de esa empresa'});
+
+            if(ofertasEncontradas.length>0){
+                return res.status(200).send({ofertas: ofertasEncontradas})
+            }else{
+                return res.status(200).send({message: 'No exisen ofertas de esta empresa'})
+            }
+        })
+    }else{
+        return res.status(403).send({message: 'No tienes permiso para acceder a esta funcion'});
+    }
 }
 
 
 
 module.exports = {
     crearOferta,
-    editarOferta
+    editarOferta,
+    getOfertas,
+    getOfertasPorEmpresa
 }
