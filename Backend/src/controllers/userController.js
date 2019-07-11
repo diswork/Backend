@@ -94,6 +94,47 @@ function registrar(req, res) {
 
 }
 
+function agregarEmpresas(req, res) {
+    var params = req.body;
+    var userId = req.user.sub;
+    //var empresaSeguir = params.empresa;  // este campo recibe la empresa que el usuario va a seguir
+    var empresaId = req.params.id;
+    var empresaSeguida = false;  // este campo solo verifica si el usuario ya sigue a la empresa
+
+    if(req.user.rol === 'user') {
+        User.findById(userId, (err, usuarioEncontrada) => {
+            if(err) return res.status(404).send({message : 'Error Request'});
+    
+            if(!usuarioEncontrada) return res.status(500).send({message : 'Error al listar el usuario'});
+    
+            for(let x = 0; x < usuarioEncontrada.empresas.length; x++){                
+                if(usuarioEncontrada.empresas[x] == empresaId){
+                    empresaSeguida = true;
+                    return res.status(500).send({message : 'El usuario ya sigue a esta empresa'});
+                }
+            }
+    
+            if(empresaSeguida === false){
+                User.findByIdAndUpdate(userId, params, {new : true}, (err, nuevo) =>{
+                    if(err) return res.status(500).send({message : 'Request Error!'});
+    
+                    if(!nuevo) return res.status(400).send({message : 'Error al actualizar el usuario'});
+    
+                    nuevo.empresas.push(empresaId);
+                    nuevo.save();
+    
+                    return res.status(200).send({empresa : nuevo});
+                })
+            }
+        })        
+    } else {
+        return res.status(400).send({message : 'La empresa no puede realizar esta peticion'});        
+    }
+    
+
+    
+}
+
 function getUsers(req, res) {
     User.find().exec((err, usuariosEncontrados) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' });
@@ -102,7 +143,15 @@ function getUsers(req, res) {
     })
 }
 
+function getUser(req, res) {
+    var userId = req.params.id;
+    User.findById(userId, (err, user) => {
+        if (err) return res.status(500).send({ message: 'Error en el user' });
+        if (!user) return res.status(400).send({ message: 'Error al listar el user' })
 
+        return res.status(200).send({ user });
+    })
+}
 
 function login(req, res) {
     var params = req.body;
@@ -235,5 +284,7 @@ module.exports = {
     subirImagen,
     obtenerImagen,
     editarUsuario,
-    getUsers
+    getUsers,
+    agregarEmpresas,
+    getUser
 }

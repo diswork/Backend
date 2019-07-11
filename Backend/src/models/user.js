@@ -11,7 +11,10 @@ var UserSchema = Schema({
     image: String,
     telefono: String,
     ofertas: [],
-    empresas: []
+    empresas: [{
+        type: Schema.ObjectId,
+        ref: 'Enterprise'
+    }]
 });
 
 module.exports = mongoose.model('User', UserSchema);
