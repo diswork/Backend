@@ -8,7 +8,7 @@ function crearOferta(req, res) {
     var idEmpresa = req.user.sub
 
     if (rol === 'empresa') {
-        if (params.titulo && params.descripcion && params.nivelAcademico && params.tarjeta) {
+        if (params.titulo && params.descripcion && params.nivelAcademico && params.tarjeta && params.categoria) {
             const oferta = new Oferta();
             oferta.titulo = params.titulo;
             oferta.descripcion = params.descripcion
@@ -68,24 +68,69 @@ function getOfertas(req, res) {
     })
 }
 
-function getOfertasPorEmpresa(req,res){
-    var rol= req.user.rol;
+function getOfertasPorEmpresa(req, res) {
+    var rol = req.user.rol;
     var ofertaPorEmpresa = req.params.id
 
-    if(rol == 'user'){
-        Oferta.find({empresa: ofertaPorEmpresa},(err, ofertasEncontradas)=> {
-            if(err) return req.status(500).send({message: 'Error en la peticion'});
-            if(!ofertaPorEmpresa) return req.status(404).send({message: 'No se encuentran ofertas de esa empresa'});
+    if (rol == 'user') {
+        Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion' });
+            if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
 
-            if(ofertasEncontradas.length>0){
-                return res.status(200).send({ofertas: ofertasEncontradas})
-            }else{
-                return res.status(200).send({message: 'No exisen ofertas de esta empresa'})
+            if (ofertasEncontradas.length > 0) {
+                return res.status(200).send({ ofertas: ofertasEncontradas })
+            } else {
+                return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
             }
         })
-    }else{
-        return res.status(403).send({message: 'No tienes permiso para acceder a esta funcion'});
+    } else {
+        return res.status(403).send({ message: 'No tienes permiso para acceder a esta funcion' });
     }
+}
+
+function getOfertasPorCategoria(req, res) {
+    var idCategoria = req.params.id;
+    var rol = req.user.rol;
+
+
+
+    if (rol == 'user' || rol == 'admin' || rol == 'empresa') {
+        Oferta.find({ categoria: idCategoria }, (err, ofertasEncontradas) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+            if (!ofertasEncontradas) return res.status(404).send({ message: 'No se han econtrado ofertas con esa categoria' });
+
+            if (ofertasEncontradas && ofertasEncontradas.length > 0) {
+                return res.status(200).send({ ofertas: ofertasEncontradas })
+            }
+        })
+
+    } else {
+        return res.status(403).send({ message: 'No tienes permisos para esta funcion' });
+    }
+}
+
+function getOfertasPorNivelAcademico(req, res) {
+    var idNivelAcademico = req.params.id;
+    var rol = req.user.rol;
+
+    if (rol == 'user' || rol == 'admin' || rol == 'empresa') {
+        Oferta.find({ nivelAcademico: idNivelAcademico }, (err, ofertasEncontradas) => {
+            if (err) return req.status(500).send({ message: 'Error en la peticion' });
+
+            if (!ofertasEncontradas) return res.status(404).send({ message: 'No se han encontrado ofertas con ese nivel academico' });
+
+            if (ofertasEncontradas && ofertasEncontradas.length > 0) {
+                return res.status(200).send({ ofertas: ofertasEncontradas });
+            } else {
+                return res.status(404).send({ message: 'No se han encontrado ofertas con ese nivel academico' });
+            }
+        })
+    } else {
+        return res.status(403).send({ message: 'No tienes permisos para ejecutar esta funcion' });
+    }
+
+
 }
 
 
@@ -94,5 +139,7 @@ module.exports = {
     crearOferta,
     editarOferta,
     getOfertas,
-    getOfertasPorEmpresa
+    getOfertasPorEmpresa,
+    getOfertasPorCategoria,
+    getOfertasPorNivelAcademico
 }

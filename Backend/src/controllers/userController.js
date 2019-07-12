@@ -13,7 +13,7 @@ function registrar(req, res) {
     var empresa = new Empresa();
     var params = req.body;
 
-    if (params.nickName && params.email && params.password && params.rol === 'user' && params.telefono) {
+    if (params.nickName && params.email && params.password && params.rol === 'user' || params.rol === 'admin' && params.telefono) {
         user.nickName = params.nickName;
         user.email = params.email;
         user.rol = params.rol;
@@ -282,6 +282,45 @@ function seguirEmpresa(req, res) {
     }
 }
 
+function dejarDeSeguirEmpresa(req, res) {
+    var idUsuario = req.user.sub;
+    var rol = req.user.rol;
+    var idEmpresa = req.params.id;
+    var siguiendoEmpresa = false;
+
+    if (rol == 'user') {
+        Empresa.findById(idEmpresa, (err, empresaEncontrada) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+            if (!empresaEncontrada) return res.status(404).send({ message: 'No se ha encontrado la empresa' });
+
+            User.findById(idUsuario, (err, usuarioEncontrado) => {
+                if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+                if (!usuarioEncontrado) return res.status(404).send({ message: 'No se ha encontrado el usuario' })
+
+                for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+                    if (idEmpresa == usuarioEncontrado.empresas[x]) {
+                        siguiendoEmpresa = true
+                        console.log(x);
+                    }
+                }
+
+                if (siguiendoEmpresa == true) {
+                    usuarioEncontrado.empresas.pull(idEmpresa);
+                    usuarioEncontrado.save();
+                    return res.status(200).send({ message: 'Dejaste De seguir a la empresa' });
+                } else {
+                    return res.status(200).send({ message: 'No sigues a esta empresa' });
+                }
+
+            })
+        })
+    } else {
+        return res.status(403).send({ message: 'No tienes permisos para ejecutar esta funcion' });
+    }
+}
+
 
 module.exports = {
     registrar,
@@ -291,5 +330,6 @@ module.exports = {
     editarUsuario,
     getUsers,
     getUser,
-    seguirEmpresa
+    seguirEmpresa,
+    dejarDeSeguirEmpresa
 }

@@ -10,13 +10,16 @@ const OfertaSchema = Schema({
         type: Schema.ObjectId,
         ref: "Category"
     },
-    nivelAcademico: String,
+    nivelAcademico: {
+        type: Schema.ObjectId,
+        ref: 'Study'
+    },
     tarjeta: String,
     empresa: {
         type: Schema.ObjectId,
         ref: 'Enterprise'
     },
-    disponible : Boolean
+    disponible: Boolean
 
 })
 
