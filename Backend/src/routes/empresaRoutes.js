@@ -1,20 +1,18 @@
 'use strict'
 
 var express = require('express');
-var EmpresaController = require('../controllers/empresaController');
-var userController = require('../controllers/userController')
+var empresaController = require('../controllers/empresaController');
 var md_auth = require('../middlewares/autheticated');
 
 //SUBIR IMAGEN
 var multiparty = require('connect-multiparty');
-var md_subir = multiparty({ uploadDir: './src/uploads/users' })
+var md_subir = multiparty({ uploadDir: './src/uploads/empresa' })
 
 
 //Rutas
 var api = express.Router();
-api.post('/registrarEmpresa', userController.registrar);
-//api.post('/subir-imagen-usuario/:id', [md_auth.ensureAuth, md_subir], EmpresaController.subirImagen);
-//api.get('/obtener-imagen-usuario/:nombreImagen', EmpresaController.obtenerImagen)
+api.post('/subir-imagen-empresa/:id', [md_auth.ensureAuth, md_subir], empresaController.subirImagen);
+api.get('/obtener-imagen-empresa/:nombreImagen', empresaController.obtenerImagen)
 //api.put('/editar-usuario/:id', md_auth.ensureAuth, EmpresaController.editarUsuario)
 //api.get('/usuarios', EmpresaController.getUsers)
 

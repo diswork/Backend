@@ -19,6 +19,13 @@ const OfertaSchema = Schema({
         type: Schema.ObjectId,
         ref: 'Enterprise'
     },
+    curriculum: [{
+        idUsuario: {
+            type: Schema.ObjectId,
+            ref: 'User'
+        },curriculumVitae: []
+    }],
+    imagen: String,
     disponible: Boolean
 
 })

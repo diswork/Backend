@@ -11,6 +11,7 @@ var UserSchema = Schema({
     image: String,
     telefono: String,
     ofertas: [],
+    cv: [],
     empresas: [{
         type: Schema.ObjectId,
         ref: 'Enterprise'

@@ -17,23 +17,25 @@ function getEmpresas(req, res) {
 
 
 function subirImagen(req, res) {
-    var empresaId = req.params.id;
+    var empresaId = req.user.sub;
 
     if (req.files) {
         var file_path = req.files.image.path;
-        console.log(file_path);
+        
 
         var file_split = file_path.split('\\');
-        console.log(file_split);
+        
 
         var file_name = file_split[3];
-        console.log(file_name);
+        
 
         var ext_split = file_name.split('\.');
-        console.log(ext_split);
+        
 
         var file_ext = ext_split[1];
-        console.log(file_ext);
+        
+
+        console.log(empresaId)
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             Empresa.findByIdAndUpdate(empresaId, { image: file_name }, { new: true }, (err, empresaActualizado) => {
@@ -58,7 +60,7 @@ function removeFilesOfUploads(res, file_path, message) {
 
 function obtenerImagen(req, res) {
     var image_file = req.params.nombreImagen;
-    var path_file = './src/uploads/users/' + image_file;
+    var path_file = './src/uploads/empresa/' + image_file;
 
     fs.exists(path_file, (exists) => {
         if (exists) {

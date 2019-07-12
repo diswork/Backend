@@ -239,7 +239,6 @@ function editarUsuario(req, res) {
 
 function seguirEmpresa(req, res) {
     var rol = req.user.rol;
-    var parameters = req.body
     var idEmpresa = req.params.id
     var idUsuario = req.user.sub
     var empresaRepetida = false;

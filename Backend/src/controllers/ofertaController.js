@@ -16,10 +16,17 @@ function crearOferta(req, res) {
             oferta.nivelAcademico = params.nivelAcademico;
             oferta.tarjeta = params.tarjeta;
             oferta.empresa = idEmpresa;
+            oferta.curriculum = [];
             oferta.estado = true;
-            oferta.save();
-
-            return res.status(200).send({ oferta: oferta })
+            oferta.save((err, ofertaGuardada) => {
+                if (err) return res.status(500).send({ message: 'Error al guardar la oferta' });
+                if (ofertaGuardada) {
+                    res.status(200).send({ oferta: ofertaGuardada })
+                } else {
+                    res.status(404).send({ message: 'La oferta no se ha creado' });
+                }
+            });
+            
         } else {
             return res.status(404).send({ message: 'Ingresa los campos necesarios' })
         }
@@ -68,11 +75,9 @@ function getOfertas(req, res) {
     })
 }
 
-function getOfertasPorEmpresa(req, res) {
-    var rol = req.user.rol;
+function getOfertasPorEmpresa(req, res) {    
     var ofertaPorEmpresa = req.params.id
-
-    if (rol == 'user') {
+    
         Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
             if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
@@ -83,9 +88,7 @@ function getOfertasPorEmpresa(req, res) {
                 return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
             }
         })
-    } else {
-        return res.status(403).send({ message: 'No tienes permiso para acceder a esta funcion' });
-    }
+    
 }
 
 function getOfertasPorCategoria(req, res) {
