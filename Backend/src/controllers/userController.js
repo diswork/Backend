@@ -13,14 +13,14 @@ function registrar(req, res) {
     var empresa = new Empresa();
     var params = req.body;
 
-    if (params.nickName && params.email && params.password && params.ciudad && params.fechaNacimiento &&
+    if (params.nickName && params.email && params.password && params.departamento && params.fechaNacimiento &&
         params.rol === 'user' || params.rol === 'admin'  ) {
         user.nickName = params.nickName;
         user.email = params.email;
         user.rol = params.rol;
         user.image = null;
         user.telefono = params.telefono;
-        user.ciudad = params.ciudad;
+        user.departamento = params.departamento;
         user.colegio = null;
         user.fechaNacimiento = params.fechaNacimiento;
         user.nivelAcademico = null;
@@ -28,11 +28,19 @@ function registrar(req, res) {
         user.ofertas = [];
         user.empresa = [];
 
+        Empresa.find({ email: empresa.email }).exec((err, empresas) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
+
+            if (empresas && empresas.length >= 1) {
+                return res.status(500).send({ message: 'El email ya esta siendo utilizado' });
+            }
+        });
+
 
         User.find({
             $or: [
-                { nickName: user.nickName.toLowerCase() },
-                { email: user.email.toLowerCase() },
+                { nickName: user.nickName },
+                { email: user.email },
             ]
         }).exec((err, users) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
@@ -63,11 +71,24 @@ function registrar(req, res) {
         empresa.telefono = params.telefono;
         empresa.image = null;
 
+        User.find({
+            $or: [
+                { nickName: user.nickName },
+                { email: user.email },
+            ]
+        }).exec((err, users) => {
+            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
+
+            if (users && users.length >= 1) {
+                return res.status(500).send({ message: 'El usuario ya existe' });
+            }
+        });
+
 
         Empresa.find({
             $or: [
-                { nombre: empresa.nombre.toLowerCase() },
-                { email: empresa.email.toLowerCase() },
+                { nombre: empresa.nombre },
+                { email: empresa.email },
             ]
         }).exec((err, empresas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });

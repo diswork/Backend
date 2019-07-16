@@ -3,18 +3,45 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var UserSchema = Schema({
-    nickName: String,
-    email: String,
-    password: String,
-    rol: String,
-    image: String,
-    telefono: String,
-    ciudad: String,
-    colegio: String,
-    fechaNacimiento: Date,
-    ofertas: [],
-    cv: [],
+var userSchema = Schema({
+    nickName: {
+        type: String,
+        required : [true, "Nickname is required"],
+        index : true
+    },
+    email: {
+        type: String,
+        required : [true, "Email is required"],
+        index : true
+    },
+    password : {
+        type: String, 
+        required : [true, "Password is required."]
+    },
+    rol : {
+        type : String
+    },
+    image: {
+        type : String
+    },
+    telefono: {
+        type : String
+    },
+    departamento: {
+        type : String
+    },
+    colegio: {
+        type : String
+    },
+    fechaNacimiento: {
+        type : Date
+    },
+    ofertas: {
+        type : []
+    },
+    cv: {
+        type : []
+    },
     empresas: [{
         type: Schema.ObjectId,
         ref: 'Enterprise'
@@ -27,6 +54,9 @@ var UserSchema = Schema({
         type: Schema.ObjectId,
         ref: 'Category'
     }
-});
+}, { collation: { locale: 'es', strength: 1 } });
 
-module.exports = mongoose.model('User', UserSchema);
+userSchema.index({email : 1});
+userSchema.index({nickName: 1})
+
+module.exports = mongoose.model('User', userSchema);
