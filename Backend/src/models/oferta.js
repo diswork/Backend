@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 const OfertaSchema = Schema({
     titulo: String,
     descripcion: String,
+    fechaPublicacion: Date,
     categoria: {
         type: Schema.ObjectId,
         ref: "Category"

@@ -12,6 +12,7 @@ function crearOferta(req, res) {
             const oferta = new Oferta();
             oferta.titulo = params.titulo;
             oferta.descripcion = params.descripcion
+            oferta.fechaPublicacion = new Date();
             oferta.categoria = params.categoria;
             oferta.nivelAcademico = params.nivelAcademico;
             oferta.tarjeta = params.tarjeta;

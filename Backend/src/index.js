@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const app = require("./app");
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/Diswork', { useNewUrlParser: true }).then(()=>{
+mongoose.connect('mongodb+srv://hugos:kinal2017252@@dbdiswork-xbykg.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true }).then(()=>{
     console.log('Se encuentra conectado a la Base de Datos');
 
     app.set('port', process.env.PORT || 3000 );

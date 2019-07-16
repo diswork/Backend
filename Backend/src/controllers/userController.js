@@ -13,12 +13,18 @@ function registrar(req, res) {
     var empresa = new Empresa();
     var params = req.body;
 
-    if (params.nickName && params.email && params.password && params.rol === 'user' || params.rol === 'admin' && params.telefono) {
+    if (params.nickName && params.email && params.password && params.ciudad && params.fechaNacimiento &&
+        params.rol === 'user' || params.rol === 'admin'  ) {
         user.nickName = params.nickName;
         user.email = params.email;
         user.rol = params.rol;
         user.image = null;
         user.telefono = params.telefono;
+        user.ciudad = params.ciudad;
+        user.colegio = null;
+        user.fechaNacimiento = params.fechaNacimiento;
+        user.nivelAcademico = null;
+        user.categoria = params.categoria;
         user.ofertas = [];
         user.empresa = [];
 
@@ -220,9 +226,11 @@ function obtenerImagen(req, res) {
 function editarUsuario(req, res) {
     var userId = req.params.id;
     var params = req.body;
+    var newToken = null;
 
     //BORRAR LA PROPIEDAD DE PASSWORD
     delete params.password;
+    
 
     if (userId != req.user.sub) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este usuario' })
@@ -231,9 +239,14 @@ function editarUsuario(req, res) {
     User.findByIdAndUpdate(userId, params, { new: true }, (err, usuarioActualizado) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' })
 
-        if (!usuarioActualizado) return res.status(404).send({ message: 'no se a podido actualizar los datos del usuario' })
-
-        return res.status(200).send({ user: usuarioActualizado })
+        if (!usuarioActualizado){
+            return res.status(404).send({ message: 'no se a podido actualizar los datos del usuario' })
+        }else{
+            newToken = jwt.createToken(usuarioActualizado);
+        }
+    
+    
+        return res.status(200).send({ user: usuarioActualizado,token : newToken })
     })
 }
 
@@ -320,6 +333,17 @@ function dejarDeSeguirEmpresa(req, res) {
     }
 }
 
+function getUserByToken(req, res){
+    
+    const usuario= req.user;
+
+    res.json({
+        ok: true,
+        usuario
+    })
+
+}
+
 
 module.exports = {
     registrar,
@@ -330,5 +354,6 @@ module.exports = {
     getUsers,
     getUser,
     seguirEmpresa,
-    dejarDeSeguirEmpresa
+    dejarDeSeguirEmpresa,
+    getUserByToken
 }
