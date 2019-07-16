@@ -12,7 +12,10 @@ exports.createToken = function(user){
         password: user.password,
         rol: user.rol,
         image: user.image,
-        ofertas: user.ofertas,
+        telefono: user.telefono,
+        ciudad: user.ciudad,
+        colegio: user.colegio,
+        fechaNacimiento: user.fechaNacimiento,
         iat: moment().unix(),
         exp: moment().day(30, 'days').unix
     };
