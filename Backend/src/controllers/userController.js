@@ -253,7 +253,7 @@ function editarUsuario(req, res) {
     delete params.password;
     
 
-    if (userId != req.user.sub) {
+    if (userId != req.user._id) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este usuario' })
     }
 
@@ -274,7 +274,7 @@ function editarUsuario(req, res) {
 function seguirEmpresa(req, res) {
     var rol = req.user.rol;
     var idEmpresa = req.params.id
-    var idUsuario = req.user.sub
+    var idUsuario = req.user._id
     var empresaRepetida = false;
 
     if (rol == 'user') {
@@ -316,7 +316,7 @@ function seguirEmpresa(req, res) {
 }
 
 function dejarDeSeguirEmpresa(req, res) {
-    var idUsuario = req.user.sub;
+    var idUsuario = req.user._id;
     var rol = req.user.rol;
     var idEmpresa = req.params.id;
     var siguiendoEmpresa = false;
@@ -356,12 +356,23 @@ function dejarDeSeguirEmpresa(req, res) {
 
 function getUserByToken(req, res){
     
-    const usuario= req.user;
+    const usuario = req.user;
+    const empresa = req.user;
 
-    res.json({
-        ok: true,
-        usuario
-    })
+
+    if(usuario.rol == "user"){
+        res.json({
+            ok: true,
+            usuario
+        })
+    }else{
+        res.json({
+            ok: true,
+            empresa
+        })
+    }
+
+   
 
 }
 

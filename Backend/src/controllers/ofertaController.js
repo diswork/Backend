@@ -5,7 +5,7 @@ const Oferta = require('../models/oferta')
 function crearOferta(req, res) {
     var params = req.body;
     var rol = req.user.rol;
-    var idEmpresa = req.user.sub
+    var idEmpresa = req.user._id
 
     if (rol === 'empresa') {
         if (params.titulo && params.descripcion && params.nivelAcademico && params.tarjeta && params.categoria) {
@@ -42,7 +42,7 @@ function crearOferta(req, res) {
 function editarOferta(req, res) {
     var idOferta = req.params.id;
     var rol = req.user.rol;
-    var idEmpresa = req.user.sub
+    var idEmpresa = req.user._id
     var parameters = req.body
 
     if (rol === 'admin' || rol === 'empresa') {

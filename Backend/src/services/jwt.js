@@ -6,15 +6,15 @@ var secret = 'app_diswork_123';
 
 exports.createToken = function(user){
     var payload = {
-        sub: user._id,
+        _id: user._id,
         nickName: user.nickName,
         email: user.email,
         password: user.password,
         rol: user.rol,
         image: user.image,
         telefono: user.telefono,
-        ciudad: user.ciudad,
-        colegio: user.colegio,
+        departamento: user.departamento,
+        institucion: user.institucion,
         fechaNacimiento: user.fechaNacimiento,
         iat: moment().unix(),
         exp: moment().day(30, 'days').unix
@@ -25,7 +25,7 @@ exports.createToken = function(user){
 
 exports.createTokenEmpresa = function(empresa){
     var payload = {
-        sub: empresa._id,
+        _id: empresa._id,
         nombre: empresa.nickName,
         email: empresa.email,
         password: empresa.password,

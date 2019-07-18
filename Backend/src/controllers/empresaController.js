@@ -17,7 +17,7 @@ function getEmpresas(req, res) {
 
 
 function subirImagen(req, res) {
-    var empresaId = req.user.sub;
+    var empresaId = req.user._id;
 
     if (req.files) {
         var file_path = req.files.image.path;
@@ -78,7 +78,7 @@ function editarEmpresa(req, res) {
     //BORRAR LA PROPIEDAD DE PASSWORD
     delete params.password;
 
-    if (empresaId != req.user.sub) {
+    if (empresaId != req.user._id) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este usuario' })
     }
 

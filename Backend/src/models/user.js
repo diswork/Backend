@@ -30,7 +30,7 @@ var userSchema = Schema({
     departamento: {
         type : String
     },
-    colegio: {
+    institucion: {
         type : String
     },
     fechaNacimiento: {
