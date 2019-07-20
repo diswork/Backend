@@ -14,55 +14,52 @@ function registrar(req, res) {
     var params = req.body;
 
     if (params.nickName && params.email && params.password && params.departamento && params.fechaNacimiento &&
-        params.rol === 'user' || params.rol === 'admin'  ) {
+        params.rol === 'user') {
         user.nickName = params.nickName;
         user.email = params.email;
         user.rol = params.rol;
-        user.image = null;
+        user.image = params.image;
         user.telefono = params.telefono;
         user.departamento = params.departamento;
-        user.colegio = null;
+        user.colegio = params.colegio;
         user.fechaNacimiento = params.fechaNacimiento;
         user.nivelAcademico = null;
-        user.categoria = params.categoria;
+        user.categoria = null;
         user.ofertas = [];
         user.empresa = [];
 
-        Empresa.find({ email: empresa.email }).exec((err, empresas) => {
+        Empresa.find({ email: params.email }).exec((err, empresas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
 
             if (empresas && empresas.length >= 1) {
                 return res.status(500).send({ message: 'El email ya esta siendo utilizado' });
-            }
-        });
-
-
-        User.find({
-            $or: [
-                { nickName: user.nickName },
-                { email: user.email },
-            ]
-        }).exec((err, users) => {
-            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
-
-            if (users && users.length >= 1) {
-                return res.status(500).send({ message: 'El usuario ya existe' });
-            } else {
-                bcrypt.hash(params.password, null, null, (err, hash) => {
-                    user.password = hash;
-
-                    user.save((err, userStored) => {
-                        if (err) return res.status(500).send({ message: 'Error al guardar el usuario' });
-
-                        if (userStored) {
-                            res.status(200).send({ user: userStored })
-                        } else {
-                            res.status(404).send({ message: 'no se ha registrado el usuario' });
-                        }
-                    });
+            }else{
+                User.find({ email: user.email}).exec((err, users) => {
+                    if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
+        
+                    if (users && users.length >= 1) {
+                        return res.status(500).send({ message: 'El usuario ya existe' });
+                    } else {
+                        bcrypt.hash(params.password, null, null, (err, hash) => {
+                            user.password = hash;
+        
+                            user.save((err, userStored) => {
+                                if (err) return res.status(500).send({ message: 'Error al guardar el usuario', err });
+        
+                                if (userStored) {
+                                    res.status(200).send({ user: userStored })
+                                } else {
+                                    res.status(404).send({ message: 'no se ha registrado el usuario' });
+                                }
+                            });
+                        });
+                    }
                 });
             }
         });
+
+
+      
     } else if (params.nombre && params.email && params.password && params.rol === 'empresa' && params.direccion && params.telefono) {
         empresa.nombre = params.nombre;
         empresa.email = params.email;
@@ -71,43 +68,37 @@ function registrar(req, res) {
         empresa.telefono = params.telefono;
         empresa.image = null;
 
-        User.find({
-            $or: [
-                { nickName: user.nickName },
-                { email: user.email },
-            ]
-        }).exec((err, users) => {
+        User.find({ email: user.email }).exec((err, users) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
 
             if (users && users.length >= 1) {
                 return res.status(500).send({ message: 'El usuario ya existe' });
-            }
-        });
-
-
-        Empresa.find({
-            $or: [
-                { nombre: empresa.nombre },
-                { email: empresa.email },
-            ]
-        }).exec((err, empresas) => {
-            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
-
-            if (empresas && empresas.length >= 1) {
-                return res.status(500).send({ message: 'El usuario ya existe' });
-            } else {
-                bcrypt.hash(params.password, null, null, (err, hash) => {
-                    empresa.password = hash;
-
-                    empresa.save((err, empresaStored) => {
-                        if (err) return res.status(500).send({ message: 'Error al guardar el usuario' });
-
-                        if (empresaStored) {
-                            res.status(200).send({ empresa: empresaStored })
-                        } else {
-                            res.status(404).send({ message: 'no se ha registrado el usuario' });
-                        }
-                    });
+            }else{
+                Empresa.find({
+                    $or: [
+                        { nombre: empresa.nombre },
+                        { email: empresa.email },
+                    ]
+                }).exec((err, empresas) => {
+                    if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
+        
+                    if (empresas && empresas.length >= 1) {
+                        return res.status(500).send({ message: 'El usuario ya existe' });
+                    } else {
+                        bcrypt.hash(params.password, null, null, (err, hash) => {
+                            empresa.password = hash;
+        
+                            empresa.save((err, empresaStored) => {
+                                if (err) return res.status(500).send({ message: 'Error al guardar el usuario' });
+        
+                                if (empresaStored) {
+                                    res.status(200).send({ empresa: empresaStored })
+                                } else {
+                                    res.status(404).send({ message: 'no se ha registrado el usuario' });
+                                }
+                            });
+                        });
+                    }
                 });
             }
         });
@@ -156,7 +147,6 @@ function login(req, res) {
                             user: user
 
                         })
-                        console.log(req.user.rol)
                     } else {
                         user.password = undefined;
                         return res.status(200).send({ user })
@@ -252,6 +242,9 @@ function editarUsuario(req, res) {
     //BORRAR LA PROPIEDAD DE PASSWORD
     delete params.password;
     
+    
+
+    console.log(params)
 
     if (userId != req.user._id) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este usuario' })
