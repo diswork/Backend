@@ -269,7 +269,6 @@ function seguirEmpresa(req, res) {
     var idEmpresa = req.params.id
     var idUsuario = req.user._id
     var empresaRepetida = false;
-
     if (rol == 'user') {
         Empresa.findById(idEmpresa, (err, empresaEncontrada) => {
             if (err) return res.status(500).send({ message: 'error en la peticion' });
@@ -286,7 +285,7 @@ function seguirEmpresa(req, res) {
 
                     if (idEmpresa == usuarioEncontrado.empresas[x]) {
                         empresaRepetida = true;
-
+                        x= usuarioEncontrado.empresas.length;
                     } else {
                         empresaRepetida = false;
                     }
