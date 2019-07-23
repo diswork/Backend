@@ -9,26 +9,18 @@ var path = require('path');
 var fs = require('fs');
 
 
-function registrar(req, res) {
+function crearAdmin(req, res) {
     var user = new User();
-    var empresa = new Empresa();
     var admin = new Admin();
     var params = req.body;
 
-    if (params.nickName && params.email && params.password && params.departamento && params.fechaNacimiento &&
-        params.rol === 'user') {
-        user.nickName = params.nickName;
-        user.email = params.email;
-        user.rol = params.rol;
-        user.image = params.image;
-        user.telefono = params.telefono;
-        user.departamento = params.departamento;
-        user.colegio = params.colegio;
-        user.fechaNacimiento = params.fechaNacimiento;
-        user.nivelAcademico = null;
-        user.categoria = null;
-        user.ofertas = [];
-        user.empresa = [];
+    if (params.nickName && params.email && params.password && params.telefono) {
+        admin.nickName = params.nickName;
+        admin.email = params.email;
+        admin.rol = 'admin';        
+        admin.telefono = params.telefono;
+
+        if (req.user.rol != 'admin') return res.status(500).send({ message: 'Error en la peticion de usuarios nac' });
 
         Empresa.find({ email: params.email }).exec((err, empresas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
@@ -36,83 +28,28 @@ function registrar(req, res) {
             if (empresas && empresas.length >= 1) {
                 return res.status(500).send({ message: 'El email ya esta siendo utilizado' });
             }
-            Admin.find({ email: user.email }).exec((err, amdins) => {
-                if (err) return res.status(500).send({ message: 'Error en la peticion de admins' });
+            User.find({ email: user.email }).exec((err, users) => {
+                if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
     
-                if (amdins && amdins.length >= 1) {
+                if (users && users.length >= 1) {
                     return res.status(500).send({ message: 'El email ya esta siendo utilizado' });
                 } else{
-                User.find({ email: user.email}).exec((err, users) => {
-                    if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
+                Admin.find({ email: admin.email}).exec((err, admins) => {
+                    if (err) return res.status(500).send({ message: 'Error en la peticion de admins' });
         
-                    if (users && users.length >= 1) {
-                        return res.status(500).send({ message: 'El usuario ya existe' });
+                    if (admins && admins.length >= 1) {
+                        return res.status(500).send({ message: 'El admin ya existe' });
                     } else {
                         bcrypt.hash(params.password, null, null, (err, hash) => {
-                            user.password = hash;
+                            admin.password = hash;
         
-                            user.save((err, userStored) => {
-                                if (err) return res.status(500).send({ message: 'Error al guardar el usuario', err });
+                            admin.save((err, adminStored) => {
+                                if (err) return res.status(500).send({ message: 'Error al guardar el admin', err });
         
-                                if (userStored) {
-                                    res.status(200).send({ user: userStored })
+                                if (adminStored) {
+                                    res.status(200).send({ admin: adminStored })
                                 } else {
-                                    res.status(404).send({ message: 'no se ha registrado el usuario' });
-                                }
-                            });
-                        });
-                    }
-                });
-            }
-        });
-    });
-
-
-      
-    } else if (params.nombre && params.email && params.password && params.rol === 'empresa' && params.direccion && params.telefono) {
-        empresa.nombre = params.nombre;
-        empresa.email = params.email;
-        empresa.rol = params.rol;
-        empresa.direccion = params.direccion;
-        empresa.telefono = params.telefono;
-        empresa.image = null;
-
-        User.find({ email: user.email }).exec((err, users) => {
-            if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
-
-            if (users && users.length >= 1) {
-                return res.status(500).send({ message: 'El usuario ya existe' });
-            }
-            Admin.find({ email: empresa.email }).exec((err, amdins) => {
-                if (err) return res.status(500).send({ message: 'Error en la peticion de admins' });
-    
-                if (amdins && amdins.length >= 1) {
-                    return res.status(500).send({ message: 'El email ya esta siendo utilizado' });
-                }
-            
-
-            else{
-                Empresa.find({
-                    $or: [
-                        { nombre: empresa.nombre },
-                        { email: empresa.email },
-                    ]
-                }).exec((err, empresas) => {
-                    if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
-        
-                    if (empresas && empresas.length >= 1) {
-                        return res.status(500).send({ message: 'El usuario ya existe' });
-                    } else {
-                        bcrypt.hash(params.password, null, null, (err, hash) => {
-                            empresa.password = hash;
-        
-                            empresa.save((err, empresaStored) => {
-                                if (err) return res.status(500).send({ message: 'Error al guardar el usuario' });
-        
-                                if (empresaStored) {
-                                    res.status(200).send({ empresa: empresaStored })
-                                } else {
-                                    res.status(404).send({ message: 'no se ha registrado el usuario' });
+                                    res.status(404).send({ message: 'no se ha registrado el admin' });
                                 }
                             });
                         });
@@ -146,78 +83,6 @@ function getUser(req, res) {
 
         return res.status(200).send({ user });
     })
-}
-
-function login(req, res) {
-    var params = req.body;
-    var email2 = params.email;
-    var password = params.password;
-
-    User.findOne({ email: email2 }, (err, user) => {
-        if (err) return res.status(500).send({ message: 'Error en la peticion' })
-
-        if (user) {
-            bcrypt.compare(password, user.password, (err, check) => {
-                if (check) {
-                    if (params.gettoken && user.rol === 'user' || user.rol === 'admin') {
-
-                        return res.status(200).send({
-                            token: jwt.createToken(user),
-                            user: user
-
-                        })
-                    } else {
-                        user.password = undefined;
-                        return res.status(200).send({ user })
-                    }
-                } else {
-                    return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
-                }
-            });
-        } else {
-            Empresa.findOne({ email: email2 }, (err, empresa) => {
-                if (empresa) {
-                    bcrypt.compare(password, empresa.password, (err, check) => {
-                        if (check) {
-                            if (params.gettoken && empresa.rol === 'empresa') {
-                                return res.status(200).send({
-                                    token: jwt.createTokenEmpresa(empresa),
-                                    empresa: empresa
-                                })
-                            } else {
-                                empresa.password = undefined;
-                                return res.status(200).send({ empresa })
-                            }
-                        } else {
-                            return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
-                        }
-                    });
-                } else {                    
-                    Admin.findOne({ email: email2 }, (err, admin) => {
-                        if (admin) {
-                            bcrypt.compare(password, admin.password, (err, check) => {
-                                if (check) {
-                                    if (params.gettoken && admin.rol === 'admin') {
-                                        return res.status(200).send({
-                                            token: jwt.createTokenAdmin(admin),
-                                            admin: admin
-                                        })
-                                    } else {
-                                        admin.password = undefined;
-                                        return res.status(200).send({ admin })
-                                    }
-                                } else {
-                                    return res.status(404).send({ message: 'El email o la contraseña son incorrectos' })
-                                }
-                            });
-                        } else {
-                            return res.status(404).send({ message: 'El usuario no existe' })
-                        }
-                    });
-                }
-            });
-        }
-    });
 }
 
 function subirImagen(req, res) {
@@ -409,14 +274,14 @@ function getUserByToken(req, res){
 
 
 module.exports = {
-    registrar,
-    login,
-    subirImagen,
-    obtenerImagen,
-    editarUsuario,
-    getUsers,
-    getUser,
-    seguirEmpresa,
-    dejarDeSeguirEmpresa,
-    getUserByToken
+    crearAdmin
+    // login,
+    // subirImagen,
+    // obtenerImagen,
+    // editarUsuario,
+    // getUsers,
+    // getUser,
+    // seguirEmpresa,
+    // dejarDeSeguirEmpresa,
+    // getUserByToken
 }

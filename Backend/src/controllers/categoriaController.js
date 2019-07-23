@@ -7,6 +7,10 @@ function crearCategoria(req, res) {
     var params = req.body;
     var rol = req.user.rol;
 
+    if (rol != 'admin') {
+        return res.status(500).send({message: 'No tiene los permisos para realizar la accion'});
+    }
+
     if (params.descripcion && rol === 'admin') {
         categoria.descripcion = params.descripcion;
 

@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 
 //CARGAR RUTAS
 var user_routes = require('./routes/userRoutes');
+var admin_routes = require('./routes/adminRoutes');
 var empresa_routes = require('./routes/empresaRoutes');
 var categoria_routes = require('./routes/categoriaRoutes');
 var nivelAcademico_routes = require('./routes/nivelAcademicoRoutes');
@@ -27,7 +28,8 @@ app.use((req, res, next) => {
 });
 
 //RUTAS
-app.use('/api', user_routes, categoria_routes, nivelAcademico_routes,empresa_routes,ofertaRoutes);
+app.use('/api', user_routes, categoria_routes, nivelAcademico_routes,
+empresa_routes,ofertaRoutes, admin_routes);
 
 
 //EXPORTAR

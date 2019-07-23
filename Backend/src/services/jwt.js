@@ -40,3 +40,18 @@ exports.createTokenEmpresa = function(empresa){
 
     return jwt.encode(payload, secret);
 }
+
+exports.createTokenAdmin = function(user){
+    var payload = {
+        _id: user._id,
+        nickName: user.nickName,
+        email: user.email,
+        password: user.password,
+        rol: user.rol,
+        telefono: user.telefono,        
+        iat: moment().unix(),
+        exp: moment().day(30, 'days').unix
+    };
+
+    return jwt.encode(payload, secret);
+}
