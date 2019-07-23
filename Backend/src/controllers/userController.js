@@ -273,6 +273,58 @@ function obtenerImagen(req, res) {
     });
 }
 
+function subirCurriculum(req, res) {
+    var userId = req.user._id;
+
+    if (req.files) {
+        var file_path = req.files.cv.path;
+        console.log(file_path);
+
+        var file_split = file_path.split('\\');
+        console.log(file_split);
+
+        var file_name = file_split[3];
+        console.log(file_name);
+
+        var ext_split = file_name.split('\.');
+        console.log(ext_split);
+
+        var file_ext = ext_split[1];
+        console.log(file_ext);
+
+        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'pdf') {
+            User.findById(userId, (err, usuarioEncontrado) => {
+                if (err) return res.status(500).send({ message: ' no se a podido actualizar el usuario' })
+
+                if (!usuarioEncontrado) return res.status(404).send({ message: 'error no se encuentra el usuario' })
+
+                
+                usuarioEncontrado.cv.push(file_name);
+                usuarioEncontrado.save();
+
+                return res.status(200).send({ usuario: usuarioEncontrado })
+                
+            })
+        } else {
+            return removeFilesOfUploads(res, file_path, 'extension no valida')
+        }
+
+    }
+}
+
+function obtenerCurriculum(req, res) {
+    var cv_file = req.params.nombreCv;
+    var path_file = './src/uploads/users/' + cv_file;
+
+    fs.exists(path_file, (exists) => {
+        if (exists) {
+            res.sendFile(path.resolve(path_file));
+        } else {
+            res.status(200).send({ message: 'no existe el curriculum' })
+        }
+    });
+}
+
 function editarUsuario(req, res) {
     var userId = req.params.id;
     var params = req.body;
@@ -418,5 +470,7 @@ module.exports = {
     getUser,
     seguirEmpresa,
     dejarDeSeguirEmpresa,
-    getUserByToken
+    getUserByToken,
+    subirCurriculum,
+    obtenerCurriculum
 }

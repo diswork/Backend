@@ -14,6 +14,8 @@ var api = express.Router();
 api.post('/registrar', userController.registrar);
 api.post('/login', userController.login);
 api.post('/subir-imagen-usuario/:id', [md_auth.ensureAuth, md_subir], userController.subirImagen);
+api.post('/subir-cv', [md_auth.ensureAuth, md_subir], userController.subirCurriculum);
+api.get('/obtener-cv/:nombreCv', userController.obtenerCurriculum);
 api.get('/obtener-imagen-usuario/:nombreImagen', userController.obtenerImagen);
 api.put('/editar-usuario/:id', md_auth.ensureAuth, userController.editarUsuario);
 api.get('/usuarios', userController.getUsers);
