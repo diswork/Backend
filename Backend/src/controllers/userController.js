@@ -245,7 +245,7 @@ function subirImagen(req, res) {
 
                 if (!usuarioActualizado) return res.status(404).send({ message: 'error en los datos del usuario, no se pudo actualizar' })
 
-                return res.status(200).send({ user: usuarioActualizado });
+                return res.status(200).send({ user: usuarioActualizado,token :  jwt.createToken(usuarioActualizado) });
             })
         } else {
             return removeFilesOfUploads(res, file_path, 'extension no valida')
@@ -299,10 +299,10 @@ function subirCurriculum(req, res) {
                 if (!usuarioEncontrado) return res.status(404).send({ message: 'error no se encuentra el usuario' })
 
                 
-                usuarioEncontrado.cv.push(file_name);
+                usuarioEncontrado.cvs.push(file_name);
                 usuarioEncontrado.save();
-
-                return res.status(200).send({ usuario: usuarioEncontrado })
+                
+                return res.status(200).send({token :  jwt.createToken(usuarioEncontrado)})
                 
             })
         } else {

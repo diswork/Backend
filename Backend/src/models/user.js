@@ -22,7 +22,7 @@ var userSchema = Schema({
     institucion : String,
     fechaNacimiento: Date,
     ofertas: [],
-    cv: [],
+    cvs: [],
     empresas: [{
         type: Schema.ObjectId,
         ref: 'Enterprise'
