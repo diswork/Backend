@@ -17,5 +17,6 @@ api.get('/ofertasPorEmpresa/:id', md_auth.ensureAuth, ofertaController.getOferta
 api.get('/ofertasPorCategoria/:id', md_auth.ensureAuth, ofertaController.getOfertasPorCategoria);
 api.get('/ofertasPorNivelAcademico/:id', md_auth.ensureAuth, ofertaController.getOfertasPorNivelAcademico);
 api.post('/subir-imagen-oferta/:id', [md_auth.ensureAuth, md_subir], ofertaController.subirImagen);
+api.get('/obtener-imagen-oferta/:nombreImagen', ofertaController.obtenerImagen);
 
 module.exports = api;

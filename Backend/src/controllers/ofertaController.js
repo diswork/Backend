@@ -158,9 +158,9 @@ function subirImagen(req, res) {
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             Oferta.findByIdAndUpdate(ofertaId, { image: file_name }, { new: true }, (err, ofertaActualizado) => {
-                if (err) return res.status(500).send({ message: ' no se a podido actualizar el usuario' })
+                if (err) return res.status(500).send({ message: ' no se a podido actualizar la oferta' })
 
-                if (!ofertaActualizado) return res.status(404).send({ message: 'error en los datos del usuario, no se pudo actualizar' })
+                if (!ofertaActualizado) return res.status(404).send({ message: 'error en los datos de la oferta, no se pudo actualizar' })
 
                 return res.status(200).send({ oferta: ofertaActualizado });
             })
@@ -169,6 +169,19 @@ function subirImagen(req, res) {
         }
 
     }
+}
+
+function obtenerImagen(req, res) {
+    var image_file = req.params.nombreImagen;
+    var path_file = './src/uploads/ofertas/' + image_file;
+
+    fs.exists(path_file, (exists) => {
+        if (exists) {
+            res.sendFile(path.resolve(path_file));
+        } else {
+            res.status(200).send({ message: 'no existe la imagen' })
+        }
+    });
 }
 
 
@@ -181,5 +194,6 @@ module.exports = {
     getOfertasPorEmpresa,
     getOfertasPorCategoria,
     getOfertasPorNivelAcademico,
-    subirImagen
+    subirImagen,
+    obtenerImagen
 }
