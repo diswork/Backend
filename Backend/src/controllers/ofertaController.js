@@ -137,6 +137,41 @@ function getOfertasPorNivelAcademico(req, res) {
 
 }
 
+function subirImagen(req, res) {
+    var ofertaId = req.params.id;
+
+    if (req.files) {
+        var file_path = req.files.image.path;
+        console.log(file_path);
+
+        var file_split = file_path.split('\\');
+        console.log(file_split);
+
+        var file_name = file_split[3];
+        console.log(file_name);
+
+        var ext_split = file_name.split('\.');
+        console.log(ext_split);
+
+        var file_ext = ext_split[1];
+        console.log(file_ext);
+
+        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+            Oferta.findByIdAndUpdate(ofertaId, { image: file_name }, { new: true }, (err, ofertaActualizado) => {
+                if (err) return res.status(500).send({ message: ' no se a podido actualizar el usuario' })
+
+                if (!ofertaActualizado) return res.status(404).send({ message: 'error en los datos del usuario, no se pudo actualizar' })
+
+                return res.status(200).send({ oferta: ofertaActualizado });
+            })
+        } else {
+            return removeFilesOfUploads(res, file_path, 'extension no valida')
+        }
+
+    }
+}
+
+
 
 
 module.exports = {
@@ -145,5 +180,6 @@ module.exports = {
     getOfertas,
     getOfertasPorEmpresa,
     getOfertasPorCategoria,
-    getOfertasPorNivelAcademico
+    getOfertasPorNivelAcademico,
+    subirImagen
 }
