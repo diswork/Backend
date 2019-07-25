@@ -15,25 +15,35 @@ function getEmpresas(req, res) {
     })
 }
 
+function getEmpresa(req, res) {
+    var empresaId = req.params.id;
+
+    Empresa.findById(empresaId, (err, empresaEncontrados) => {
+        if (err) return res.status(500).send({ message: 'error en la peticion' });
+        if (!empresaEncontrados) return res.status(400).send({ message: 'error al buscar la empresa' });
+        return res.status(200).send({ empresas: empresaEncontrados })
+    });
+}
+
 
 function subirImagen(req, res) {
     var empresaId = req.user._id;
 
     if (req.files) {
         var file_path = req.files.image.path;
-        
+
 
         var file_split = file_path.split('\\');
-        
+
 
         var file_name = file_split[3];
-        
+
 
         var ext_split = file_name.split('\.');
-        
+
 
         var file_ext = ext_split[1];
-        
+
 
         console.log(empresaId)
 
@@ -96,5 +106,6 @@ module.exports = {
     subirImagen,
     obtenerImagen,
     editarEmpresa,
-    getEmpresas
+    getEmpresas,
+    getEmpresa
 }
