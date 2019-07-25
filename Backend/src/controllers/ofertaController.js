@@ -1,6 +1,8 @@
 'use strict'
 
 const Oferta = require('../models/oferta')
+var path = require('path');
+var fs = require('fs');
 
 function crearOferta(req, res) {
     var params = req.body;
@@ -141,7 +143,7 @@ function subirImagen(req, res) {
     var ofertaId = req.params.id;
 
     if (req.files) {
-        var file_path = req.files.image.path;
+        var file_path = req.files.imagen.path;
         console.log(file_path);
 
         var file_split = file_path.split('\\');
@@ -157,7 +159,7 @@ function subirImagen(req, res) {
         console.log(file_ext);
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
-            Oferta.findByIdAndUpdate(ofertaId, { image: file_name }, { new: true }, (err, ofertaActualizado) => {
+            Oferta.findByIdAndUpdate(ofertaId, { imagen: file_name }, { new: true }, (err, ofertaActualizado) => {
                 if (err) return res.status(500).send({ message: ' no se a podido actualizar la oferta' })
 
                 if (!ofertaActualizado) return res.status(404).send({ message: 'error en los datos de la oferta, no se pudo actualizar' })
