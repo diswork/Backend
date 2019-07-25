@@ -4,8 +4,7 @@ const mongoose = require("mongoose");
 const app = require("./app");
 
 mongoose.Promise = global.Promise;
-// hugos:kinal2017252@ds253567.mlab.com:53567/heroku_6j5hjpjw
-mongoose.connect('mongodb://localhost:27017/Diswork', { useNewUrlParser: true }).then(() => {
+mongoose.connect('mongodb://hugos:kinal2017252@ds253567.mlab.com:53567/heroku_6j5hjpjw', { useNewUrlParser: true }).then(() => {
     console.log('Se encuentra conectado a la Base de Datos');
 
     app.set('port', process.env.PORT || 3000);

@@ -23,5 +23,6 @@ api.get('/usuario/:id', md_auth.ensureAuth, userController.getUser);
 api.get('/verificaToken',md_auth.ensureAuth, userController.getUserByToken);
 api.put('/seguir-empresa/:id', md_auth.ensureAuth, userController.seguirEmpresa);
 api.put('/dejar-de-seguir-empresa/:id', md_auth.ensureAuth, userController.dejarDeSeguirEmpresa)
+api.delete('/usuario/:id', md_auth.ensureAuth, userController.eliminarUsuario);
 
 module.exports = api;

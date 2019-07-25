@@ -5,21 +5,18 @@ var adminController = require('../controllers/adminController');
 var md_auth = require('../middlewares/autheticated');
 
 //SUBIR IMAGEN
-//var multiparty = require('connect-multiparty');
-//var md_subir = multiparty({ uploadDir: './src/uploads/users' })
+var multiparty = require('connect-multiparty');
+var md_subir = multiparty({ uploadDir: './src/uploads/admins' })
 
 
 //Rutas
 var api = express.Router();
 api.post('/crear-admin', md_auth.ensureAuth, adminController.crearAdmin);
-// api.post('/login', userController.login);
-// api.post('/subir-imagen-usuario/:id', [md_auth.ensureAuth, md_subir], userController.subirImagen);
-// api.get('/obtener-imagen-usuario/:nombreImagen', userController.obtenerImagen);
-// api.put('/editar-usuario/:id', md_auth.ensureAuth, userController.editarUsuario);
-// api.get('/usuarios', userController.getUsers);
-// api.get('/usuario/:id', md_auth.ensureAuth, userController.getUser);
-// api.get('/verificaToken',md_auth.ensureAuth, userController.getUserByToken);
-// api.put('/seguir-empresa/:id', md_auth.ensureAuth, userController.seguirEmpresa);
-// api.put('/dejar-de-seguir-empresa/:id', md_auth.ensureAuth, userController.dejarDeSeguirEmpresa)
+api.post('/subir-imagen-admin', [md_auth.ensureAuth, md_subir], adminController.subirImagen);
+api.get('/obtener-imagen-admin/:nombreImagen', adminController.obtenerImagen);
+api.put('/editar-admin/:id', md_auth.ensureAuth, adminController.editarAdmin);
+api.get('/admins', adminController.getAdmins);
+api.get('/admin/:id', adminController.getAdmin);
+api.delete('/admin/:id', md_auth.ensureAuth, adminController.eliminarAdmin);
 
 module.exports = api;

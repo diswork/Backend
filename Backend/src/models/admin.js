@@ -16,7 +16,8 @@ var adminSchema = Schema({
         type: String, 
     },
     rol : String,
-    telefono : String    
+    telefono : String,
+    image : String
 }, { collation: { locale: 'es', strength: 1 } });
 
 adminSchema.index({email : 1});

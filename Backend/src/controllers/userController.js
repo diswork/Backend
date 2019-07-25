@@ -138,6 +138,27 @@ function getUsers(req, res) {
     })
 }
 
+function eliminarUsuario(req, res){
+    var usuarioId = req.params.id; 
+    
+    User.findByIdAndRemove(usuarioId, (err, usuarioEliminado) => {
+
+        if(err) return res.status(500).send({ message: 'Error en el servidor' });
+         
+            if(usuarioEliminado){
+                return res.status(200).send({
+                    usuario: usuarioEliminado
+                });
+            }else{
+                return res.status(404).send({
+                    message: 'No existe el usuario'
+                });
+            }
+         
+    });
+
+}
+
 function getUser(req, res) {
     var userId = req.params.id;
     User.findById(userId, (err, user) => {
@@ -159,7 +180,7 @@ function login(req, res) {
         if (user) {
             bcrypt.compare(password, user.password, (err, check) => {
                 if (check) {
-                    if (params.gettoken && user.rol === 'user' || user.rol === 'admin') {
+                    if (params.gettoken && user.rol === 'user') {
 
                         return res.status(200).send({
                             token: jwt.createToken(user),
@@ -197,7 +218,7 @@ function login(req, res) {
                         if (admin) {
                             bcrypt.compare(password, admin.password, (err, check) => {
                                 if (check) {
-                                    if (params.gettoken && admin.rol === 'admin') {
+                                    if (params.gettoken && admin.rol === 'admin') {                                        
                                         return res.status(200).send({
                                             token: jwt.createTokenAdmin(admin),
                                             admin: admin
@@ -466,6 +487,7 @@ module.exports = {
     subirImagen,
     obtenerImagen,
     editarUsuario,
+    eliminarUsuario,
     getUsers,
     getUser,
     seguirEmpresa,
