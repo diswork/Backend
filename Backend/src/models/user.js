@@ -22,7 +22,25 @@ var userSchema = Schema({
     institucion : String,
     fechaNacimiento: Date,
     ofertas: [],
-    cvs: [],
+    cvsRedactado: [{
+        titulo: String,
+        nombre: String,
+        edad: String,
+        correo: String,
+        telefono: String,
+        estudio: String,
+        habilidad: String,
+        refPersonal: String,
+        refEmpresarial: String
+    }],
+    cvsPdf: [{
+        titulo: String,
+        archivo: String
+    }],
+    cvsImg: [{
+        titulo: String,
+        archivo: String
+    }],
     empresas: [{
         type: Schema.ObjectId,
         ref: 'Enterprise'

@@ -29,6 +29,17 @@ function registrar(req, res) {
         user.categoria = null;
         user.ofertas = [];
         user.empresa = [];
+        user.cvsRedactado = [{
+            titulo: "",
+            nombre: "",
+            edad: null,
+            correo: null,
+            telefono: null,
+            estudio: null,
+            habilidad: null,
+            refPersonal: null,
+            refEmpresarial: null
+        }];
 
         Empresa.find({ email: params.email }).exec((err, empresas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
@@ -458,6 +469,24 @@ function dejarDeSeguirEmpresa(req, res) {
     }
 }
 
+function cvRedactado(req, res){  
+
+    var usuarioId = req.user._id;
+    // User.findOneAndUpdate(usuarioId, {
+    //     $set : {
+    //         [cvsRedactado[0].titulo]: "admin-guide.pdf"
+    //     }
+    // }, { new: true }, (err, actualizado) => {
+    //     if (err) return res.status(404).send({ message: "error en la peticion de encuesta" });
+    //     if (!actualizado) return res.status(500).send({ message: "error al opinar en la encuesta" });
+        
+    //     actualizado.save();
+    //     return res.status(200).send({ user: actualizado });
+    // });
+
+}
+
+
 function getUserByToken(req, res){
     
     const usuario = req.user;
@@ -494,5 +523,6 @@ module.exports = {
     dejarDeSeguirEmpresa,
     getUserByToken,
     subirCurriculum,
-    obtenerCurriculum
+    obtenerCurriculum,
+    cvRedactado
 }

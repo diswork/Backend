@@ -18,11 +18,13 @@ api.post('/subir-cv', [md_auth.ensureAuth, md_subir], userController.subirCurric
 api.get('/obtener-cv/:nombreCv', userController.obtenerCurriculum);
 api.get('/obtener-imagen-usuario/:nombreImagen', userController.obtenerImagen);
 api.put('/editar-usuario/:id', md_auth.ensureAuth, userController.editarUsuario);
+api.put('/cvRedactado', md_auth.ensureAuth, userController.cvRedactado);
 api.get('/usuarios', userController.getUsers);
 api.get('/usuario/:id', md_auth.ensureAuth, userController.getUser);
 api.get('/verificaToken',md_auth.ensureAuth, userController.getUserByToken);
 api.put('/seguir-empresa/:id', md_auth.ensureAuth, userController.seguirEmpresa);
 api.put('/dejar-de-seguir-empresa/:id', md_auth.ensureAuth, userController.dejarDeSeguirEmpresa)
 api.delete('/usuario/:id', md_auth.ensureAuth, userController.eliminarUsuario);
+
 
 module.exports = api;
