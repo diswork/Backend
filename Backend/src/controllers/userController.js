@@ -301,7 +301,7 @@ function subirImagen(req, res) {
 
                 if (!usuarioActualizado) return res.status(404).send({ message: 'error en los datos del usuario, no se pudo actualizar' })
 
-                return res.status(200).send({ user: usuarioActualizado,token :  jwt.createToken(usuarioActualizado) });
+                return res.status(200).send({token :  jwt.createToken(usuarioActualizado) });
             })
         } else {
             return removeFilesOfUploads(res, file_path, 'extension no valida')
