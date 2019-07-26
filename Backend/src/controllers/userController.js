@@ -29,17 +29,7 @@ function registrar(req, res) {
         user.categoria = null;
         user.ofertas = [];
         user.empresa = [];
-        user.cvsRedactado = [{
-            titulo: "",
-            nombre: "",
-            edad: null,
-            correo: null,
-            telefono: null,
-            estudio: null,
-            habilidad: null,
-            refPersonal: null,
-            refEmpresarial: null
-        }];
+        user.cvsRedactado = [];
 
         Empresa.find({ email: params.email }).exec((err, empresas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
@@ -138,6 +128,39 @@ function registrar(req, res) {
         });
     }
 
+
+}
+
+function cvRedactado(req, res){  
+
+    var usuarioId = req.user._id;
+    var params = req.body;
+    User.findById(usuarioId, (err, actualizado) => {
+        if (err) return res.status(404).send({ message: "error en la peticion de encuesta" });
+        if (!actualizado) return res.status(500).send({ message: "error al opinar en la encuesta" });
+
+        if (params.titulo && params.nombre && params.edad && params.correo && params.telefono
+            && params.estudio && params.habilidad && params.refPersonal && params.refPersonal) {
+                actualizado.cvsRedactado.push({            
+                        titulo: params.titulo,
+                        nombre: params.nombre,
+                        edad: params.edad,
+                        correo: params.correo,
+                        telefono: params.telefono,
+                        estudio: params.estudio,
+                        habilidad: params.habilidad,
+                        refPersonal: params.refPersonal,
+                        refEmpresarial: params.refEmpresarial            
+                });
+
+                actualizado.save();
+                return res.status(200).send({ user: actualizado });
+        } else {
+            res.status(200).send({
+                message: 'Rellene todos los datos necesarios'
+            });
+        }
+    });
 
 }
 
@@ -469,22 +492,7 @@ function dejarDeSeguirEmpresa(req, res) {
     }
 }
 
-function cvRedactado(req, res){  
 
-    var usuarioId = req.user._id;
-    // User.findOneAndUpdate(usuarioId, {
-    //     $set : {
-    //         [cvsRedactado[0].titulo]: "admin-guide.pdf"
-    //     }
-    // }, { new: true }, (err, actualizado) => {
-    //     if (err) return res.status(404).send({ message: "error en la peticion de encuesta" });
-    //     if (!actualizado) return res.status(500).send({ message: "error al opinar en la encuesta" });
-        
-    //     actualizado.save();
-    //     return res.status(200).send({ user: actualizado });
-    // });
-
-}
 
 
 function getUserByToken(req, res){
