@@ -155,7 +155,7 @@ function cvRedactado(req, res){
                 });
 
                 actualizado.save();
-                return res.status(200).send({ user: actualizado });
+                return res.status(200).send({token :  jwt.createToken(actualizado)});
         } else {
             res.status(200).send({
                 message: 'Rellene todos los datos necesarios'

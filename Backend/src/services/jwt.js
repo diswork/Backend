@@ -13,7 +13,9 @@ exports.createToken = function(user){
         rol: user.rol,
         image: user.image,
         empresas: user.empresas,
-        cvs: user.cvs,
+        cvsRedactado: user.cvsRedactado,
+        cvsImg: user.cvsImg,
+        cvsPdf: user.cvsPdf,
         telefono: user.telefono,
         departamento: user.departamento,
         institucion: user.institucion,
@@ -50,6 +52,7 @@ exports.createTokenAdmin = function(user){
         password: user.password,
         rol: user.rol,
         telefono: user.telefono,        
+        image: user.image,
         iat: moment().unix(),
         exp: moment().day(30, 'days').unix
     };
