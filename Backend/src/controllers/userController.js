@@ -30,6 +30,7 @@ function registrar(req, res) {
         user.ofertas = [];
         user.empresa = [];
         user.cvsRedactado = [];
+        user.cvsImg = [];
 
         Empresa.find({ email: params.email }).exec((err, empresas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion de usuarios' });
@@ -330,37 +331,57 @@ function obtenerImagen(req, res) {
 
 function subirCurriculum(req, res) {
     var userId = req.user._id;
-
+    var params = req.body;
+    
     if (req.files) {
         var file_path = req.files.cv.path;
-        console.log(file_path);
+        //console.log(file_path);
 
         var file_split = file_path.split('\\');
-        console.log(file_split);
+        //console.log(file_split);
 
         var file_name = file_split[3];
-        console.log(file_name);
+        //console.log(file_name);
 
         var ext_split = file_name.split('\.');
-        console.log(ext_split);
+        //console.log(ext_split);
 
         var file_ext = ext_split[1];
-        console.log(file_ext);
+        //console.log(file_ext);
 
-        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'pdf') {
+        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg') {
+            User.findById(userId, (err, usuarioEncontrado) => {
+                if (err) return res.status(500).send({ message: ' no se a podido actualizar el usuario' });
+
+                if (!usuarioEncontrado) return res.status(404).send({ message: 'error no se encuentra el usuario' });
+                
+                usuarioEncontrado.cvsImg.push({
+                    titulo: params.titulo,
+                    archivo: file_name
+                });
+                usuarioEncontrado.save();
+                
+                return res.status(200).send({token :  jwt.createToken(usuarioEncontrado)});
+                
+            });
+        } else if (file_ext == 'pdf'){
             User.findById(userId, (err, usuarioEncontrado) => {
                 if (err) return res.status(500).send({ message: ' no se a podido actualizar el usuario' })
 
                 if (!usuarioEncontrado) return res.status(404).send({ message: 'error no se encuentra el usuario' })
 
                 
-                usuarioEncontrado.cvs.push(file_name);
+                usuarioEncontrado.cvsPdf.push({
+                    titulo: params.titulo,
+                    archivo: file_name
+                });
                 usuarioEncontrado.save();
                 
-                return res.status(200).send({token :  jwt.createToken(usuarioEncontrado)})
+                return res.status(200).send({token :  jwt.createToken(usuarioEncontrado)});
                 
-            })
-        } else {
+            });
+        }
+        else {
             return removeFilesOfUploads(res, file_path, 'extension no valida')
         }
 
@@ -499,6 +520,7 @@ function getUserByToken(req, res){
     
     const usuario = req.user;
     const empresa = req.user;
+    const admin = req.user;
 
 
     if(usuario.rol == "user"){
@@ -506,15 +528,17 @@ function getUserByToken(req, res){
             ok: true,
             usuario
         })
-    }else{
+    } else if(empresa.rol == "empresa"){
         res.json({
             ok: true,
             empresa
         })
+    } else {
+        res.json({
+            ok: true,
+            admin
+        });
     }
-
-   
-
 }
 
 
