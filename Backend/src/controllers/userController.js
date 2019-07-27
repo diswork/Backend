@@ -301,7 +301,7 @@ function subirImagen(req, res) {
 
                 if (!usuarioActualizado) return res.status(404).send({ message: 'error en los datos del usuario, no se pudo actualizar' })
 
-                return res.status(200).send({ user: usuarioActualizado,token :  jwt.createToken(usuarioActualizado) });
+                return res.status(200).send({token :  jwt.createToken(usuarioActualizado) });
             })
         } else {
             return removeFilesOfUploads(res, file_path, 'extension no valida')
@@ -465,7 +465,7 @@ function seguirEmpresa(req, res) {
                 if (empresaRepetida == false) {
                     usuarioEncontrado.empresas.push(idEmpresa);
                     usuarioEncontrado.save();
-                    return res.status(200).send({ usuario: usuarioEncontrado })
+                    return res.status(200).send({usuario: usuarioEncontrado, token : jwt.createToken(usuarioEncontrado) });
                 }
             })
         })
@@ -501,7 +501,7 @@ function dejarDeSeguirEmpresa(req, res) {
                 if (siguiendoEmpresa == true) {
                     usuarioEncontrado.empresas.pull(idEmpresa);
                     usuarioEncontrado.save();
-                    return res.status(200).send({ message: 'Dejaste De seguir a la empresa' });
+                    return res.status(200).send({usuario: usuarioEncontrado, token : jwt.createToken(usuarioEncontrado) });
                 } else {
                     return res.status(200).send({ message: 'No sigues a esta empresa' });
                 }
