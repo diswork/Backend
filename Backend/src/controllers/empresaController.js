@@ -81,23 +81,34 @@ function obtenerImagen(req, res) {
     });
 }
 
-function editarEmpresa(req, res) {
+
+function editarEmpre(req, res) {
     var empresaId = req.params.id;
     var params = req.body;
+    var newToken = null;
 
     //BORRAR LA PROPIEDAD DE PASSWORD
     delete params.password;
+    
+    
+
+    console.log(params)
 
     if (empresaId != req.user._id) {
-        return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este usuario' })
+        return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de esta empresa' })
     }
 
     Empresa.findByIdAndUpdate(empresaId, params, { new: true }, (err, empresaActualizado) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' })
 
-        if (!empresaActualizado) return res.status(404).send({ message: 'no se a podido actualizar los datos del usuario' })
-
-        return res.status(200).send({ empresa: empresaActualizado })
+        if (!empresaActualizado){
+            return res.status(404).send({ message: 'no se a podido actualizar los datos del la empresa' })
+        }else{
+            newToken = jwt.createToken(empresaActualizado);
+        }
+    
+    
+        return res.status(200).send({ empresa: empresaActualizado,token : newToken })
     })
 }
 
@@ -105,7 +116,8 @@ function editarEmpresa(req, res) {
 module.exports = {
     subirImagen,
     obtenerImagen,
-    editarEmpresa,
+    //editarEmpresa,
     getEmpresas,
-    getEmpresa
+    getEmpresa,
+    editarEmpre,
 }
