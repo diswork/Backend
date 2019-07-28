@@ -21,7 +21,7 @@ function getEmpresa(req, res) {
     Empresa.findById(empresaId, (err, empresaEncontrados) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' });
         if (!empresaEncontrados) return res.status(400).send({ message: 'error al buscar la empresa' });
-        return res.status(200).send({ empresas: empresaEncontrados })
+        return res.status(200).send({ empresa: empresaEncontrados })
     });
 }
 
