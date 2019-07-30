@@ -1,6 +1,7 @@
 'use strict'
 
 const Oferta = require('../models/oferta')
+const User = require('../models/user')
 var path = require('path');
 var fs = require('fs');
 
@@ -80,19 +81,35 @@ function getOfertas(req, res) {
 
 function getOfertasPorEmpresa(req, res) {    
     var ofertaPorEmpresa = req.params.id
-    
-        Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
-            if (err) return res.status(500).send({ message: 'Error en la peticion' });
-            if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
 
-            if (ofertasEncontradas.length > 0) {
-                return res.status(200).send({ ofertas: ofertasEncontradas })
-            } else {
-                return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
-            }
-        })
+    Oferta.find({ empresa: ofertaPorEmpresa }).populate('empresa').
+    populate('categoria').populate('nivelAcademico').exec((err, ofertasEncontradas) => {
+
+        if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+        if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
+
+        if (ofertasEncontradas.length > 0) {
+            return res.status(200).send({ ofertas: ofertasEncontradas })
+        } else {
+            return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
+        }
+
+    })
+    
+        // Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
+        //     if (err) return res.status(500).send({ message: 'Error en la peticion' });
+        //     if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
+
+        //     if (ofertasEncontradas.length > 0) {
+        //         return res.status(200).send({ ofertas: ofertasEncontradas })
+        //     } else {
+        //         return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
+        //     }
+        // })
     
 }
+
 
 function getOfertasPorCategoria(req, res) {
     var idCategoria = req.params.id;
