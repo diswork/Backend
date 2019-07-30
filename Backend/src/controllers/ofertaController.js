@@ -86,27 +86,32 @@ function getOfertasEmpresasSeguidas(req, res) {
     var ofertas = [];
 
     User.findById(userId, (err, usuarioEncontrado) => {
-        for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
-           empresaId = usuarioEncontrado.empresas[x];
-            Oferta.find({empresa:empresaId}).sort({"fechaPublicacion": -1}).exec((err, ofertaEncontrada) => { 
-                for (let y = 0; y < ofertaEncontrada.length; y++) {
-                    ofertas.push(ofertaEncontrada[y]);
-                }
-                
-
-                if (x == usuarioEncontrado.empresas.length -1) {   
-                    ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
-                    return res.status(200).send({ofertas});
-                //     ofertas.sort(function (a, b) {
-                //         if (a.fechaPublicacion > b.fechaPublicacion) {
-                //           return 0;
-                //         }
-                //     });                 
-                //    return res.status(200).send({ofertas});
-                }       
-                
-            });
+        if(usuarioEncontrado.empresas.length > 0){
+            for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+                empresaId = usuarioEncontrado.empresas[x];
+                 Oferta.find({empresa:empresaId}).sort({"fechaPublicacion": -1}).exec((err, ofertaEncontrada) => { 
+                     for (let y = 0; y < ofertaEncontrada.length; y++) {
+                         ofertas.push(ofertaEncontrada[y]);
+                     }
+                     
+     
+                     if (x == usuarioEncontrado.empresas.length -1) {   
+                         ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
+                         return res.status(200).send({ofertas});
+                     //     ofertas.sort(function (a, b) {
+                     //         if (a.fechaPublicacion > b.fechaPublicacion) {
+                     //           return 0;
+                     //         }
+                     //     });                 
+                     //    return res.status(200).send({ofertas});
+                     }
+                     
+                 });
+             }
+        }else{
+            res.status(200).send({message : 'no'})   
         }
+       
     })
         
     
