@@ -79,6 +79,29 @@ function getOfertas(req, res) {
     })
 }
 
+// function getOfertasEmpresasSeguidas(req, res) {    
+//     var userId = req.user._id;
+//     var empresas = []
+
+//     User.findById(userId, (err, usuarioEncontrado) => {
+//         for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+//             empresas.push(usuarioEncontrado.empresas[x]);
+//             console.log(usuarioEncontrado.empresas[x]);
+//         }
+//     })
+//         // Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
+//         //     if (err) return res.status(500).send({ message: 'Error en la peticion' });
+//         //     if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
+
+//         //     if (ofertasEncontradas.length > 0) {
+//         //         return res.status(200).send({ ofertas: ofertasEncontradas })
+//         //     } else {
+//         //         return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
+//         //     }
+//         // })
+    
+// }
+
 function getOfertasPorEmpresa(req, res) {    
     var ofertaPorEmpresa = req.params.id
 

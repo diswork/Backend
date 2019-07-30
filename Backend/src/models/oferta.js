@@ -20,11 +20,17 @@ const OfertaSchema = Schema({
         type: Schema.ObjectId,
         ref: 'Enterprise'
     },
-    curriculum: [{
-        idUsuario: {
-            type: Schema.ObjectId,
-            ref: 'User'
-        },curriculumVitae: []
+    cvsPdf: [{
+        idUser: {type: Schema.ObjectId, ref: 'User'},
+        archivo: String
+    }],
+    cvsImg: [{
+        idUser: {type: Schema.ObjectId, ref: 'User'},
+        archivo: String
+    }],
+    cvsRedactado: [{
+        idUser: {type: Schema.ObjectId, ref: 'User'},
+        archivo: String
     }],
     imagen: String,
     disponible: Boolean

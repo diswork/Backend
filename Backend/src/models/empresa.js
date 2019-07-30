@@ -29,7 +29,7 @@ var enterpriseSchema = Schema({
     },
     telefono: {
         type : String
-    },
+    }    
 }, { collation: { locale: 'es', strength: 1 } });
 
 enterpriseSchema.index({nombre : 1});

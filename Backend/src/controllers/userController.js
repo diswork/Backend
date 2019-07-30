@@ -4,6 +4,7 @@ var bcrypt = require('bcrypt-nodejs');
 var User = require('../models/user');
 var Empresa = require('../models/empresa');
 var Admin = require('../models/admin');
+var Oferta = require('../models/oferta');
 var jwt = require('../services/jwt');
 var path = require('path');
 var fs = require('fs');
@@ -515,6 +516,59 @@ function dejarDeSeguirEmpresa(req, res) {
 
 
 
+function enviarCvImg(req, res) {
+    var userId = req.user._id;
+    var ofertaId = req.params.id;
+    var params = req.body;
+    var ext_split;
+        
+    
+    if (userId && params.archivo) {
+        ext_split = params.archivo.split('\.');
+        if (ext_split[1] == 'png' || ext_split[1] == 'jpg' || ext_split[1] == 'jpeg' || ext_split[1] == 'gif') {
+            Oferta.findById(ofertaId, (err, ofertaEncotrada) => {
+                ofertaEncotrada.cvsImg.push({
+                    idUser: userId,
+                    archivo: params.archivo                
+                    
+                });                
+                
+                ofertaEncotrada.save();     
+    
+                return res.status(200).send({message: 'Su Cv ha sido enviado'});
+            });  
+        } else if (ext_split[1] == 'pdf'){
+            Oferta.findById(ofertaId, (err, ofertaEncotrada) => {
+                ofertaEncotrada.cvsPdf.push({
+                    idUser: userId,
+                    archivo: params.archivo                
+                    
+                });                
+                
+                ofertaEncotrada.save();     
+    
+                return res.status(200).send({message: 'Su Cv ha sido enviado'});
+            });
+        } else {
+            Oferta.findById(ofertaId, (err, ofertaEncotrada) => {
+                ofertaEncotrada.cvsRedactado.push({
+                    idUser: userId,
+                    archivo: params.archivo                
+                    
+                });
+                ofertaEncotrada.save();     
+    
+                return res.status(200).send({message: 'Su Cv ha sido enviado'});
+            });
+        }
+        
+
+    }else {
+        return res.status(200).send({message: 'Ingrese su cv para enviarlo'});
+    }       
+}
+
+
 
 function getUserByToken(req, res){
     
@@ -556,5 +610,6 @@ module.exports = {
     getUserByToken,
     subirCurriculum,
     obtenerCurriculum,
-    cvRedactado
+    cvRedactado,
+    enviarCvImg
 }

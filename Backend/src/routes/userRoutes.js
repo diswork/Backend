@@ -19,6 +19,7 @@ api.get('/obtener-cv/:nombreCv', userController.obtenerCurriculum);
 api.get('/obtener-imagen-usuario/:nombreImagen', userController.obtenerImagen);
 api.put('/editar-usuario/:id', md_auth.ensureAuth, userController.editarUsuario);
 api.put('/cvRedactado', md_auth.ensureAuth, userController.cvRedactado);
+api.put('/enviar-cv-img/:id', md_auth.ensureAuth, userController.enviarCvImg);
 api.get('/usuarios', userController.getUsers);
 api.get('/usuario/:id', md_auth.ensureAuth, userController.getUser);
 api.get('/verificaToken',md_auth.ensureAuth, userController.getUserByToken);
