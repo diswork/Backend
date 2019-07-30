@@ -2,6 +2,7 @@
 
 const Oferta = require('../models/oferta')
 const User = require('../models/user')
+const Empresa = require('../models/empresa')
 var path = require('path');
 var fs = require('fs');
 
@@ -79,28 +80,37 @@ function getOfertas(req, res) {
     })
 }
 
-// function getOfertasEmpresasSeguidas(req, res) {    
-//     var userId = req.user._id;
-//     var empresas = []
+function getOfertasEmpresasSeguidas(req, res) {    
+    var userId = req.user._id;
+    var empresaId;    
+    var ofertas = [];
 
-//     User.findById(userId, (err, usuarioEncontrado) => {
-//         for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
-//             empresas.push(usuarioEncontrado.empresas[x]);
-//             console.log(usuarioEncontrado.empresas[x]);
-//         }
-//     })
-//         // Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
-//         //     if (err) return res.status(500).send({ message: 'Error en la peticion' });
-//         //     if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
+    User.findById(userId, (err, usuarioEncontrado) => {
+        for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+           empresaId = usuarioEncontrado.empresas[x];
+            Oferta.find({empresa:empresaId}).sort({"fechaPublicacion": -1}).exec((err, ofertaEncontrada) => { 
+                for (let y = 0; y < ofertaEncontrada.length; y++) {
+                    ofertas.push(ofertaEncontrada[y]);
+                }
+                
 
-//         //     if (ofertasEncontradas.length > 0) {
-//         //         return res.status(200).send({ ofertas: ofertasEncontradas })
-//         //     } else {
-//         //         return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
-//         //     }
-//         // })
+                if (x == usuarioEncontrado.empresas.length -1) {   
+                    ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
+                    return res.status(200).send({ofertas});
+                //     ofertas.sort(function (a, b) {
+                //         if (a.fechaPublicacion > b.fechaPublicacion) {
+                //           return 0;
+                //         }
+                //     });                 
+                //    return res.status(200).send({ofertas});
+                }       
+                
+            });
+        }
+    })
+        
     
-// }
+}
 
 function getOfertasPorEmpresa(req, res) {    
     var ofertaPorEmpresa = req.params.id
@@ -237,5 +247,6 @@ module.exports = {
     getOfertasPorCategoria,
     getOfertasPorNivelAcademico,
     subirImagen,
-    obtenerImagen
+    obtenerImagen,
+    getOfertasEmpresasSeguidas
 }
