@@ -30,7 +30,7 @@ const OfertaSchema = Schema({
     }],
     cvsRedactado: [{
         idUser: {type: Schema.ObjectId, ref: 'User'},
-        archivo: String
+        archivo: []
     }],
     imagen: String,
     disponible: Boolean

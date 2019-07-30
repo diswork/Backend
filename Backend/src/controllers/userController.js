@@ -521,9 +521,10 @@ function enviarCvImg(req, res) {
     var ofertaId = req.params.id;
     var params = req.body;
     var ext_split;
-        
+        console.log(params)
     
     if (userId && params.archivo) {
+        console.log('entra')
         ext_split = params.archivo.split('\.');
         if (ext_split[1] == 'png' || ext_split[1] == 'jpg' || ext_split[1] == 'jpeg' || ext_split[1] == 'gif') {
             Oferta.findById(ofertaId, (err, ofertaEncotrada) => {
@@ -549,20 +550,19 @@ function enviarCvImg(req, res) {
     
                 return res.status(200).send({message: 'Su Cv ha sido enviado'});
             });
-        } else {
-            Oferta.findById(ofertaId, (err, ofertaEncotrada) => {
-                ofertaEncotrada.cvsRedactado.push({
-                    idUser: userId,
-                    archivo: params.archivo                
-                    
-                });
-                ofertaEncotrada.save();     
-    
-                return res.status(200).send({message: 'Su Cv ha sido enviado'});
-            });
-        }
-        
+        }       
 
+    }else if(userId && params.titulo){
+        Oferta.findById(ofertaId, (err, ofertaEncotrada) => {
+            ofertaEncotrada.cvsRedactado.push({
+                idUser: userId,
+                archivo: params                
+                
+            });
+            ofertaEncotrada.save();     
+
+            return res.status(200).send({message: 'Su Cv ha sido enviado'});
+        });
     }else {
         return res.status(200).send({message: 'Ingrese su cv para enviarlo'});
     }       
