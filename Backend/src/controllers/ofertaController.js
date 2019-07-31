@@ -131,8 +131,8 @@ function getOfertasEmpresasSeguidasCN(req, res) {
     var nivelIdOferta;
     var ofertas = [];
 
-    console.log(userNivel)
-    console.log(userCategoria)
+    // console.log(userNivel)
+    // console.log(userCategoria)
 
     User.findById(userId ,(err, usuarioEncontrado) => {
         if(usuarioEncontrado.empresas.length > 0){
@@ -145,8 +145,8 @@ function getOfertasEmpresasSeguidasCN(req, res) {
                         
                         categoriaIdOferta = ofertaEncontrada[y].categoria._id.toString();
                         nivelIdOferta = ofertaEncontrada[y].nivelAcademico._id.toString();
-                        console.log('oferta cat '+categoriaIdOferta)
-                        console.log('oferta nivel '+nivelIdOferta)
+                        // console.log('oferta cat '+categoriaIdOferta)
+                        // console.log('oferta nivel '+nivelIdOferta)
                     
                         if(userCategoria === categoriaIdOferta && 
                             userNivel === nivelIdOferta){ 
