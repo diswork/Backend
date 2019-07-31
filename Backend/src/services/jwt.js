@@ -13,6 +13,8 @@ exports.createToken = function(user){
         rol: user.rol,
         image: user.image,
         empresas: user.empresas,
+        categoria: user.categoria,
+        nivelAcademico: user.nivelAcademico,
         cvsRedactado: user.cvsRedactado,
         cvsImg: user.cvsImg,
         cvsPdf: user.cvsPdf,

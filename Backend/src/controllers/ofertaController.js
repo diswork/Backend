@@ -112,6 +112,75 @@ function getOfertasEmpresasSeguidas(req, res) {
     
 }
 
+function getOfertaById(req, res){
+    let idOferta = req.params.id;
+
+    Oferta.findById(idOferta, (err, oferta) => {
+        if (err) return res.status(500).send({ message: 'Error en la peticion' });
+        if (!oferta) return res.status(404).send({ message: 'No se han encotrado ofertas' });
+        return res.status(200).send({ oferta })
+    })
+}
+
+function getOfertasEmpresasSeguidasCN(req, res) {  
+    var userId = req.user._id;
+    var userCategoria = req.user.categoria;
+    var userNivel = req.user.nivelAcademico;
+    var empresaId;    
+    var categoriaIdOferta;
+    var nivelIdOferta;
+    var ofertas = [];
+
+    console.log(userNivel)
+    console.log(userCategoria)
+
+    User.findById(userId ,(err, usuarioEncontrado) => {
+        if(usuarioEncontrado.empresas.length > 0){
+            for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
+                empresaId = usuarioEncontrado.empresas[x];
+                 Oferta.find({empresa:empresaId}).populate('empresa').
+                 populate('categoria').populate('nivelAcademico').exec((err, ofertaEncontrada) => { 
+
+                    for (let y = 0; y < ofertaEncontrada.length; y++) {
+                        
+                        categoriaIdOferta = ofertaEncontrada[y].categoria._id.toString();
+                        nivelIdOferta = ofertaEncontrada[y].nivelAcademico._id.toString();
+                        console.log('oferta cat '+categoriaIdOferta)
+                        console.log('oferta nivel '+nivelIdOferta)
+                    
+                        if(userCategoria === categoriaIdOferta && 
+                            userNivel === nivelIdOferta){ 
+                                
+                            ofertas.push(ofertaEncontrada[y]);
+                                
+                        }else if(userCategoria === categoriaIdOferta &&
+                            userNivel === null){ 
+                                
+                            ofertas.push(ofertaEncontrada[y]);
+                                
+                        }else if(userNivel === nivelIdOferta &&
+                            userCategoria === null){                                
+                            ofertas.push(ofertaEncontrada[y]);                                
+                        }else if(userNivel === null && userCategoria === null){
+                            ofertas.push(ofertaEncontrada[y]);
+                        }
+                    }
+     
+                     if (x == usuarioEncontrado.empresas.length -1) {   
+                         ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
+                         return res.status(200).send({ofertas});
+                     }
+                     
+                 });
+             }
+        }else{
+            res.status(200).send({message : 'no'})   
+        }
+       
+    })    
+    
+}
+
 function getOfertasPorEmpresa(req, res) {    
     var ofertaPorEmpresa = req.params.id
 
@@ -270,5 +339,7 @@ module.exports = {
     subirImagen,
     obtenerImagen,
     getOfertasEmpresasSeguidas,
-    getCvsPorOferta
+    getCvsPorOferta,
+    getOfertasEmpresasSeguidasCN,
+    getOfertaById
 }
