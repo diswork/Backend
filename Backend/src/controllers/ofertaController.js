@@ -85,11 +85,12 @@ function getOfertasEmpresasSeguidas(req, res) {
     var empresaId;    
     var ofertas = [];
 
-    User.findById(userId, (err, usuarioEncontrado) => {
+    User.findById(userId ,(err, usuarioEncontrado) => {
         if(usuarioEncontrado.empresas.length > 0){
             for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
                 empresaId = usuarioEncontrado.empresas[x];
-                 Oferta.find({empresa:empresaId}).sort({"fechaPublicacion": -1}).exec((err, ofertaEncontrada) => { 
+                 Oferta.find({empresa:empresaId}).populate('empresa').
+                 populate('categoria').populate('nivelAcademico').exec((err, ofertaEncontrada) => { 
                      for (let y = 0; y < ofertaEncontrada.length; y++) {
                          ofertas.push(ofertaEncontrada[y]);
                      }
@@ -98,12 +99,6 @@ function getOfertasEmpresasSeguidas(req, res) {
                      if (x == usuarioEncontrado.empresas.length -1) {   
                          ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
                          return res.status(200).send({ofertas});
-                     //     ofertas.sort(function (a, b) {
-                     //         if (a.fechaPublicacion > b.fechaPublicacion) {
-                     //           return 0;
-                     //         }
-                     //     });                 
-                     //    return res.status(200).send({ofertas});
                      }
                      
                  });
@@ -135,19 +130,40 @@ function getOfertasPorEmpresa(req, res) {
 
     })
     
-        // Oferta.find({ empresa: ofertaPorEmpresa }, (err, ofertasEncontradas) => {
-        //     if (err) return res.status(500).send({ message: 'Error en la peticion' });
-        //     if (!ofertaPorEmpresa) return req.status(404).send({ message: 'No se encuentran ofertas de esa empresa' });
-
-        //     if (ofertasEncontradas.length > 0) {
-        //         return res.status(200).send({ ofertas: ofertasEncontradas })
-        //     } else {
-        //         return res.status(200).send({ message: 'No exisen ofertas de esta empresa' })
-        //     }
-        // })
-    
 }
 
+
+function getCvsPorOferta(req, res) {    
+    var idEmpresa = req.user._id;
+    var idOFerta = req.params.id;
+    var cvsEncontrados = [];
+
+    Oferta.findById(idOFerta,(err,ofertaEncontrada) => {
+
+            
+            if (idEmpresa == ofertaEncontrada.empresa){
+                
+                if (err) return res.status(500).send({ message: 'Error en la peticion' });
+
+                if (!ofertaEncontrada) return req.status(404).send({ message: 'No se ha encontrado la oferta' });
+
+                for (let x = 0; x < ofertaEncontrada.cvsImg.length; x++) {
+                    cvsEncontrados.push(ofertaEncontrada.cvsImg[x]);
+                }
+                for (let x = 0; x < ofertaEncontrada.cvsPdf.length; x++) {
+                    cvsEncontrados.push(ofertaEncontrada.cvsPdf[x]);
+                }
+                for (let x = 0; x < ofertaEncontrada.cvsRedactado.length; x++) {
+                    
+                    cvsEncontrados.push(ofertaEncontrada.cvsRedactado[x]);
+                }
+
+                return res.status(200).send({cvsEncontrados});
+
+
+            }
+    });
+}
 
 function getOfertasPorCategoria(req, res) {
     var idCategoria = req.params.id;
@@ -156,7 +172,7 @@ function getOfertasPorCategoria(req, res) {
 
 
     if (rol == 'user' || rol == 'admin' || rol == 'empresa') {
-        Oferta.find({ categoria: idCategoria }, (err, ofertasEncontradas) => {
+        Oferta.find({ categoria: idCategoria }).populate('empresa').exec((err, ofertasEncontradas) => {
             if (err) return res.status(500).send({ message: 'Error en la peticion' });
 
             if (!ofertasEncontradas) return res.status(404).send({ message: 'No se han econtrado ofertas con esa categoria' });
@@ -176,7 +192,7 @@ function getOfertasPorNivelAcademico(req, res) {
     var rol = req.user.rol;
 
     if (rol == 'user' || rol == 'admin' || rol == 'empresa') {
-        Oferta.find({ nivelAcademico: idNivelAcademico }, (err, ofertasEncontradas) => {
+        Oferta.find({ nivelAcademico: idNivelAcademico }).populate('empresa').exec((err, ofertasEncontradas) => {
             if (err) return req.status(500).send({ message: 'Error en la peticion' });
 
             if (!ofertasEncontradas) return res.status(404).send({ message: 'No se han encontrado ofertas con ese nivel academico' });
@@ -253,5 +269,6 @@ module.exports = {
     getOfertasPorNivelAcademico,
     subirImagen,
     obtenerImagen,
-    getOfertasEmpresasSeguidas
+    getOfertasEmpresasSeguidas,
+    getCvsPorOferta
 }
