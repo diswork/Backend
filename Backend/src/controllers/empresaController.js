@@ -68,6 +68,27 @@ function removeFilesOfUploads(res, file_path, message) {
     })
 }
 
+function eliminarEmpresa(req, res){
+    var empresaId = req.params.id; 
+    
+    Empresa.findByIdAndRemove(empresaId, (err, empresaEliminado) => {
+
+        if(err) return res.status(500).send({ message: 'Error en el servidor' });
+         
+            if(empresaEliminado){
+                return res.status(200).send({
+                    empresa: empresaEliminado
+                });
+            }else{
+                return res.status(404).send({
+                    message: 'No existe la empresa'
+                });
+            }
+         
+    });
+
+}
+
 function obtenerImagen(req, res) {
     var image_file = req.params.nombreImagen;
     var path_file = './src/uploads/empresa/' + image_file;
@@ -120,4 +141,5 @@ module.exports = {
     getEmpresas,
     getEmpresa,
     editarEmpre,
+    eliminarEmpresa
 }
