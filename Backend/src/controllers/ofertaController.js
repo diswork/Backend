@@ -84,6 +84,7 @@ function getOfertasEmpresasSeguidas(req, res) {
     var userId = req.user._id;
     var empresaId;    
     var ofertas = [];
+    var contador = 0;
 
     User.findById(userId ,(err, usuarioEncontrado) => {
         if(usuarioEncontrado.empresas.length > 0){
@@ -91,18 +92,28 @@ function getOfertasEmpresasSeguidas(req, res) {
                 empresaId = usuarioEncontrado.empresas[x];
                  Oferta.find({empresa:empresaId}).populate('empresa').
                  populate('categoria').populate('nivelAcademico').exec((err, ofertaEncontrada) => { 
-                     for (let y = 0; y < ofertaEncontrada.length; y++) {
-                         ofertas.push(ofertaEncontrada[y]);
+                     console.log(ofertaEncontrada , 'Indice : ' + x)
+                     if(ofertaEncontrada.length > 0){
+                         console.log('entra')
+                        for (let y = 0; y < ofertaEncontrada.length; y++) {
+                            ofertas.push(ofertaEncontrada[y]);
+                        }
+                        contador++
+                     }else{
+                         contador++
                      }
-                     
-     
-                     if (x == usuarioEncontrado.empresas.length -1) {   
-                         ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
-                         return res.status(200).send({ofertas});
-                     }
+                      
+                     if (contador == usuarioEncontrado.empresas.length && ofertas.length > 0) {   
+                        ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
+                        console.log(ofertas + 'ESTE ES EL FINAL')
+                        return res.status(200).send({ofertas});
+                    }else if(contador == usuarioEncontrado.empresas.length){
+                        res.status(200).send({message : 'no'})   
+                    }
                      
                  });
              }
+
         }else{
             res.status(200).send({message : 'no'})   
         }
@@ -137,7 +148,6 @@ function getOfertasEmpresasSeguidasCN(req, res) {
         if(ofertaEncontrada.length > 0){
 
             for (let y = 0; y < ofertaEncontrada.length; y++) {
-                console.log(ofertaEncontrada)
                 categoriaIdOferta = ofertaEncontrada[y].categoria._id.toString();
                 nivelIdOferta = ofertaEncontrada[y].nivelAcademico._id.toString();
                 // console.log('oferta cat '+categoriaIdOferta)
