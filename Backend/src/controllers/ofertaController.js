@@ -137,7 +137,7 @@ function getOfertasEmpresasSeguidasCN(req, res) {
         if(ofertaEncontrada.length > 0){
 
             for (let y = 0; y < ofertaEncontrada.length; y++) {
-            
+                console.log(ofertaEncontrada)
                 categoriaIdOferta = ofertaEncontrada[y].categoria._id.toString();
                 nivelIdOferta = ofertaEncontrada[y].nivelAcademico._id.toString();
                 // console.log('oferta cat '+categoriaIdOferta)

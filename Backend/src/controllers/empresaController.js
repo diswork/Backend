@@ -53,7 +53,7 @@ function subirImagen(req, res) {
 
                 if (!empresaActualizado) return res.status(404).send({ message: 'error en los datos del usuario, no se pudo actualizar' })
 
-                return res.status(200).send({ empresa: empresaActualizado });
+                return res.status(200).send({ token: jwt.createTokenEmpresa(empresaActualizado) });
             })
         } else {
             return removeFilesOfUploads(res, file_path, 'extension no valida')
@@ -104,7 +104,7 @@ function editarEmpre(req, res) {
         if (!empresaActualizado){
             return res.status(404).send({ message: 'no se a podido actualizar los datos del la empresa' })
         }else{
-            newToken = jwt.createToken(empresaActualizado);
+            newToken = jwt.createTokenEmpresa(empresaActualizado);
         }
     
     

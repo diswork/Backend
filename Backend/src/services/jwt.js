@@ -32,7 +32,7 @@ exports.createToken = function(user){
 exports.createTokenEmpresa = function(empresa){
     var payload = {
         _id: empresa._id,
-        nombre: empresa.nickName,
+        nombre: empresa.nombre,
         email: empresa.email,
         password: empresa.password,
         rol: empresa.rol,
