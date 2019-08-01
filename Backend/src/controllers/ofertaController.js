@@ -173,6 +173,8 @@ function getOfertasEmpresasSeguidasCN(req, res) {
     });
 }
 
+
+
 function getOfertasPorEmpresa(req, res) {    
     var ofertaPorEmpresa = req.params.id
 
@@ -318,6 +320,20 @@ function obtenerImagen(req, res) {
     });
 }
 
+function deleteOferta(req, res) {
+    var ofertaId = req.params.id;
+    //var body = req.body;
+
+    Oferta.findByIdAndDelete(ofertaId, (err, borrado) => {
+        if (err) res.status(500).send({ message: 'error al borrar la oferta' })
+
+        if (!borrado) res.status(404).send({ message: 'no se ha podido borrar a la oferta' })
+
+        return res.status(200).send({ oferta: borrado })
+    })
+}
+
+
 
 
 
@@ -333,5 +349,6 @@ module.exports = {
     getOfertasEmpresasSeguidas,
     getCvsPorOferta,
     getOfertasEmpresasSeguidasCN,
-    getOfertaById
+    getOfertaById,
+    deleteOferta
 }

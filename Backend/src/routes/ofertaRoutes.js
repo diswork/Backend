@@ -21,6 +21,7 @@ api.get('/obtener-imagen-oferta/:nombreImagen', ofertaController.obtenerImagen);
 api.get('/ofertas-seguidas', md_auth.ensureAuth, ofertaController.getOfertasEmpresasSeguidas);
 api.get('/ofertas-seguidas-cn', md_auth.ensureAuth, ofertaController.getOfertasEmpresasSeguidasCN);
 api.get('/cvs-oferta/:id', md_auth.ensureAuth, ofertaController.getCvsPorOferta);
-api.get('/ofertaById/:id', md_auth.ensureAuth, ofertaController.getOfertaById)
+api.get('/ofertaById/:id', md_auth.ensureAuth, ofertaController.getOfertaById);
+api.delete('/eliminar-oferta/:id', ofertaController.deleteOferta);
 
 module.exports = api;
