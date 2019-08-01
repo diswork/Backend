@@ -129,7 +129,7 @@ function getOfertaById(req, res){
     Oferta.findById(idOferta, (err, oferta) => {
         if (err) return res.status(500).send({ message: 'Error en la peticion' });
         if (!oferta) return res.status(404).send({ message: 'No se han encotrado ofertas' });
-        return res.status(200).send({ oferta })
+        return res.status(200).send({ oferta , redactado : oferta.cvsRedactado, img : oferta.cvsImg, pdf : oferta.cvsPdf})
     })
 }
 
