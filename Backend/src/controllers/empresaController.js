@@ -2,6 +2,7 @@
 
 var bcrypt = require('bcrypt-nodejs');
 var Empresa = require('../models/empresa');
+var User = require('../models/user');
 var jwt = require('../services/jwt');
 var path = require('path');
 var fs = require('fs');
@@ -102,6 +103,32 @@ function obtenerImagen(req, res) {
     });
 }
 
+function followersUsers(req, res) {
+    var idEmpresa = req.user._id;
+    var empresaArray;
+    var empresasP;
+    var followersU = [];
+
+    User.find().exec((err,usuariosEncontrados)=>{
+        for (let x = 0; x < usuariosEncontrados.length; x++) {
+            empresasP = usuariosEncontrados[x].empresas.length;
+            
+            for (let y = 0; y < empresasP; y++) {
+                
+            empresaArray = usuariosEncontrados[x].empresas[y];                
+                if (idEmpresa == empresaArray){                        
+                    followersU.push(usuariosEncontrados[x]);                        
+                }
+            }
+            if (x == usuariosEncontrados.length -1) {
+                return res.status(200).send({followersU});
+            }
+
+        }           
+            
+    });
+}
+
 
 function editarEmpre(req, res) {
     var empresaId = req.params.id;
@@ -141,5 +168,6 @@ module.exports = {
     getEmpresas,
     getEmpresa,
     editarEmpre,
-    eliminarEmpresa
+    eliminarEmpresa,
+    followersUsers
 }
