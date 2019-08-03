@@ -169,7 +169,7 @@ function cvRedactado(req, res){
 function getUsers(req, res) {
     User.find().exec((err, usuariosEncontrados) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' });
-        if (!usuariosEncontrados) return res.status(400).send({ message: 'erro al buscar los usuarios' });
+        if (!usuariosEncontrados) return res.status(400).send({ message: 'no' });
         return res.status(200).send({ usuarios: usuariosEncontrados })
     })
 }

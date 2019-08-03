@@ -11,7 +11,7 @@ var fs = require('fs');
 function getEmpresas(req, res) {
     Empresa.find().exec((err, empresasEncontrados) => {
         if (err) return res.status(500).send({ message: 'error en la peticion' });
-        if (!empresasEncontrados) return res.status(400).send({ message: 'error al buscar las empresas' });
+        if (!empresasEncontrados) return res.status(400).send({ message: 'no' });
         return res.status(200).send({ empresas: empresasEncontrados })
     })
 }
