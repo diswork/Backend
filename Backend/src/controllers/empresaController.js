@@ -46,7 +46,7 @@ function subirImagen(req, res) {
         var file_ext = ext_split[1];
 
 
-        console.log(empresaId)
+        // console.log(empresaId)
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             Empresa.findByIdAndUpdate(empresaId, { image: file_name }, { new: true }, (err, empresaActualizado) => {
@@ -140,7 +140,7 @@ function editarEmpre(req, res) {
     
     
 
-    console.log(params)
+    // console.log(params)
 
     if (empresaId != req.user._id) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de esta empresa' })

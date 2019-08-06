@@ -92,9 +92,9 @@ function getOfertasEmpresasSeguidas(req, res) {
                 empresaId = usuarioEncontrado.empresas[x];
                  Oferta.find({empresa:empresaId}).populate('empresa').
                  populate('categoria').populate('nivelAcademico').exec((err, ofertaEncontrada) => { 
-                     console.log(ofertaEncontrada , 'Indice : ' + x)
+                     // console.log(ofertaEncontrada , 'Indice : ' + x)
                      if(ofertaEncontrada.length > 0){
-                         console.log('entra')
+                         // console.log('entra')
                         for (let y = 0; y < ofertaEncontrada.length; y++) {
                             ofertas.push(ofertaEncontrada[y]);
                         }
@@ -105,7 +105,7 @@ function getOfertasEmpresasSeguidas(req, res) {
                       
                      if (contador == usuarioEncontrado.empresas.length && ofertas.length > 0) {   
                         ofertas.sort((a, b) => new Date(a.fechaPublicacion) < new Date(b.fechaPublicacion));
-                        console.log(ofertas + 'ESTE ES EL FINAL')
+                        // console.log(ofertas + 'ESTE ES EL FINAL')
                         return res.status(200).send({ofertas});
                     }else if(contador == usuarioEncontrado.empresas.length){
                         res.status(200).send({message : 'no'})   
@@ -288,19 +288,19 @@ function subirImagen(req, res) {
 
     if (req.files) {
         var file_path = req.files.imagen.path;
-        console.log(file_path);
+        // console.log(file_path);
 
         var file_split = file_path.split('\\');
-        console.log(file_split);
+        // console.log(file_split);
 
         var file_name = file_split[3];
-        console.log(file_name);
+        // console.log(file_name);
 
         var ext_split = file_name.split('\.');
-        console.log(ext_split);
+        // console.log(ext_split);
 
         var file_ext = ext_split[1];
-        console.log(file_ext);
+        // console.log(file_ext);
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             Oferta.findByIdAndUpdate(ofertaId, { imagen: file_name }, { new: true }, (err, ofertaActualizado) => {

@@ -282,19 +282,19 @@ function subirImagen(req, res) {
 
     if (req.files) {
         var file_path = req.files.image.path;
-        console.log(file_path);
+        // console.log(file_path);
 
         var file_split = file_path.split('\\');
-        console.log(file_split);
+        // console.log(file_split);
 
         var file_name = file_split[3];
-        console.log(file_name);
+        // console.log(file_name);
 
         var ext_split = file_name.split('\.');
-        console.log(ext_split);
+        // console.log(ext_split);
 
         var file_ext = ext_split[1];
-        console.log(file_ext);
+        // console.log(file_ext);
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             User.findByIdAndUpdate(userId, { image: file_name }, { new: true }, (err, usuarioActualizado) => {
@@ -412,7 +412,7 @@ function editarUsuario(req, res) {
     
     
 
-    console.log(params)
+    // console.log(params)
 
     if (userId != req.user._id) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este usuario' })
@@ -495,7 +495,7 @@ function dejarDeSeguirEmpresa(req, res) {
                 for (let x = 0; x < usuarioEncontrado.empresas.length; x++) {
                     if (idEmpresa == usuarioEncontrado.empresas[x]) {
                         siguiendoEmpresa = true
-                        console.log(x);
+                        // console.log(x);
                     }
                 }
 
@@ -521,10 +521,10 @@ function enviarCvImg(req, res) {
     var ofertaId = req.params.id;
     var params = req.body;
     var ext_split;
-        console.log(params)
+        // console.log(params)
     
     if (userId && params.archivo) {
-        console.log('entra')
+        // console.log('entra')
         ext_split = params.archivo.split('\.');
         if (ext_split[1] == 'png' || ext_split[1] == 'jpg' || ext_split[1] == 'jpeg' || ext_split[1] == 'gif') {
             Oferta.findById(ofertaId, (err, ofertaEncotrada) => {

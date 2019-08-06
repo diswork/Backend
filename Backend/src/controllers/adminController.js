@@ -90,19 +90,19 @@ function subirImagen(req, res) {
 
     if (req.files) {
         var file_path = req.files.image.path;
-        console.log(file_path);
+        // console.log(file_path);
 
         var file_split = file_path.split('\\');
-        console.log(file_split);
+        // console.log(file_split);
 
         var file_name = file_split[3];
-        console.log(file_name);
+        // console.log(file_name);
 
         var ext_split = file_name.split('\.');
-        console.log(ext_split);
+        // console.log(ext_split);
 
         var file_ext = ext_split[1];
-        console.log(file_ext);
+        // console.log(file_ext);
 
         if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
             Admin.findByIdAndUpdate(adminId, { image: file_name }, { new: true }, (err, adminActualizado) => {
@@ -145,7 +145,7 @@ function editarAdmin(req, res) {
 
     delete params.password;    
 
-    console.log(params)
+    // console.log(params)
 
     if (adminId != req.user._id) {
         return res.status(500).send({ message: 'no tiene los permisos para actualizar los datos de este admin' })
